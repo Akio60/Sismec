@@ -10,7 +10,6 @@
 theta_max = 0
 theta_min = 0 
 S_y_Uniaxial = 0
-v = 0
 S_ut = 0
 S_yz = 0
 
@@ -21,6 +20,10 @@ theta_a = (theta_max - theta_min)/2
 theta_m = (theta_max + theta_min)/2
 # Variação da tensão
 delta_theta = theta_max - theta_min
+# módulo de elasticidade do material        ##DEFINIR VALOR##
+E = 0
+# Coeficiente de poisson
+v = 0
 
 
 # Energia de deformação  [ Ud ]
@@ -29,12 +32,13 @@ delta_theta = theta_max - theta_min
 
 # referente ao estado uniaxial de tensão:
 U_d_Uniaxial = ((1 + v) * S_y_Uniaxial^2) / (3 * E)
-theta_1 = S_y_Uniaxial, 
-theta_2 = theta_3 = 0
 
-# Multiplo
-S_y_Multiplo = (theta_1^2 + theta_2^2 - theta_1 * theta_2)**(1/2)
-U_d_Multiplo = (1+v) * (theta_1^2 + theta_2^2 - theta_1 * theta_2) / 3 * E
+# Multiplo 
+# Definir theta1,2 atraves dos metodos de resistencia dos materiais
+theta_1 = 0 
+theta_2 = 0
+S_y_Multiplo = (theta_1^2 + theta_2^2 - theta_1 * theta_2) ** (1 / 2)
+U_d_Multiplo = (1+v) * (theta_1^2 + theta_2^2 - theta_1 * theta_2) / (3 * E)
 
 
 Tal_max = S_yz # verificar
