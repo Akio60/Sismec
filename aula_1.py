@@ -5,8 +5,11 @@
 #           -Ciclica                (oscila acima do eixo, sem encontro no eixo x)
 #
 # Obs: essa informação é necessária para conhecimento do numero de ciclos de vida do equipamento.
+#
+#       - Principais diagramas
+#           -Curva S-N , relaciona o n de ciclos com o limite de resistencia a fadiga S_f
 
-# Variaveis a declarar
+# Variaveis a definir
 theta_max = 0
 theta_min = 0 
 S_y_Uniaxial = 0
@@ -21,14 +24,11 @@ theta_m = (theta_max + theta_min)/2
 # Variação da tensão
 delta_theta = theta_max - theta_min
 # módulo de elasticidade do material        ##DEFINIR VALOR##
-E = 0
+E = 1
 # Coeficiente de poisson
 v = 0
 
-
 # Energia de deformação  [ Ud ]
- 
-#   - A partir das tensoes principais e do diagrama de tenao deformacao
 
 # referente ao estado uniaxial de tensão:
 U_d_Uniaxial = ((1 + v) * S_y_Uniaxial^2) / (3 * E)
@@ -40,7 +40,7 @@ theta_2 = 0
 S_y_Multiplo = (theta_1^2 + theta_2^2 - theta_1 * theta_2) ** (1 / 2)
 U_d_Multiplo = (1+v) * (theta_1^2 + theta_2^2 - theta_1 * theta_2) / (3 * E)
 
-
+# Tal -> tensão cisalhante/cortante         #Verificar
 Tal_max = S_yz # verificar
 S_y_Torcional = (3*(Tal_max^2))
 
@@ -58,14 +58,7 @@ else:
     S_e = 24  #ksi
 
 
-#
-# E -> obtido no ensaior de tração
-# Fator de segurança é calculado no diagrama S-N com as componentes medias e alternada da tensão (thetha_a e thetha_m)
-#
-#
-
 # A_95 -> dado  pela area tencionada acima de 95% da tensao maxima, verificar valores
-
 
 #   conversor ksi para Mpa e vice versa
 def ksi2Mpa(ksi):
@@ -74,7 +67,7 @@ def Mpa2ksi(Mpa):
     return Mpa * 0.145038
 
 #   tipo de carregamento
-def definir_fator_Kc(tipo_de_carregamento);
+def definir_fator_Kc(tipo_de_carregamento):
     match tipo_de_carregamento:
         case 1: #   Flexao alternada
             return 1
@@ -85,6 +78,7 @@ def definir_fator_Kc(tipo_de_carregamento);
 
 #   tamanho da peca (em mm)
 def definir_fator_Ks(tamanho):
+    tamanho = int (tamanho)
     if 0 < tamanho < 8:
         return 1
     elif 8 < tamanho < 250:
@@ -93,7 +87,8 @@ def definir_fator_Ks(tamanho):
         return "ERROR"
     
 #   temperatura em Celsius
-def definir_fator_Kt(temperatura)
+def definir_fator_Kt(temperatura):
+    temperatura = int (temperatura)
     if 0 < temperatura < 450:
         return 1
     elif 450 < temperatura < 550:
@@ -102,7 +97,7 @@ def definir_fator_Kt(temperatura)
         return "ERROR"
 
 #   superficie  (Valores definidos para Mpa)
-def definir_fator_Ksup(superficie, S_ut)
+def definir_fator_Ksup(superficie, S_ut):
     match superficie:
         case 1: #   Polimento fino comercial
             A = 1.58
@@ -121,14 +116,16 @@ def definir_fator_Ksup(superficie, S_ut)
     return (A*S_ut)**b  # Saida em Mpa
 
 #confiabilidade
-def definir_fator_Kconf(confiabilidade)
+def definir_fator_Kconf(confiabilidade):
+    confiabilidade = int (confiabilidade)
+    return 0
 
 
-tipo_de_carregamento    = input("insira o tipo de carregamento\n 1- Flexao alternada  \n 2- Carga Axial")
-tamanho                 = input("insira o tamanho em mm (verificar caso dado esteja em in)")
-temperatura             = input("insira a temperatura de operacao em C")
-superficie              = input("insira o tipo de superficie\n 1-  \n 2-  \n3-  ")
-confiabilidade          = input("insira o tipo de carregamento\n 1-  \n 2-  \n3-  ")
+tipo_de_carregamento    = input("insira o tipo de carregamento\n 1-Flexao alternada  \n 2-Carga Axial\n")
+tamanho                 = input("insira o tamanho em mm (verificar caso dado esteja em in\n)")
+temperatura             = input("insira a temperatura de operacao em C\n")
+superficie              = input("insira o tipo de superficie\n 1-Polimento  \n 2-Usinado  \n 3-Rolado  \n 4-Forjado  \n")
+confiabilidade          = input("insira o valor da confiabilidade em %\n")
 
 C_carga = definir_fator_Kc(tipo_de_carregamento)
 C_tam   = definir_fator_Ks(tamanho)
@@ -136,6 +133,9 @@ C_temp  = definir_fator_Kt(temperatura)
 C_sup   = definir_fator_Ksup(superficie,S_ut)
 C_conf  = definir_fator_Kconf(confiabilidade)
 
+# dot são as tensoes não corrigidas
+S_e_dot = 1
+S_f_dot = 1
 S_e = C_carga * C_tam * C_temp * C_sup * C_conf * S_e_dot
 S_f = C_carga * C_tam * C_temp * C_sup * C_conf * S_f_dot
-S_fs = 0,577 S_f
+S_fs = 0,577 * S_f
