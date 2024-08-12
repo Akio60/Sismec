@@ -17,20 +17,20 @@ S_ut = 0
 S_yz = 0
 
 
-# Tensão alternada
+# Tensao alternada
 theta_a = (theta_max - theta_min)/2
-# Tensão média
+# Tensao media
 theta_m = (theta_max + theta_min)/2
-# Variação da tensão
+# Variacao da tensao
 delta_theta = theta_max - theta_min
-# módulo de elasticidade do material        ##DEFINIR VALOR##
+# modulo de elasticidade do material        ##DEFINIR VALOR##
 E = 1
 # Coeficiente de poisson
 v = 0
 
-# Energia de deformação  [ Ud ]
+# Energia de deformacao  [ Ud ]
 
-# referente ao estado uniaxial de tensão:
+# referente ao estado uniaxial de tensao:
 U_d_Uniaxial = ((1 + v) * S_y_Uniaxial^2) / (3 * E)
 
 # Multiplo 
@@ -40,7 +40,7 @@ theta_2 = 0
 S_y_Multiplo = (theta_1^2 + theta_2^2 - theta_1 * theta_2) ** (1 / 2)
 U_d_Multiplo = (1+v) * (theta_1^2 + theta_2^2 - theta_1 * theta_2) / (3 * E)
 
-# Tal -> tensão cisalhante/cortante         #Verificar
+# Tal -> tensao cisalhante/cortante         #Verificar
 Tal_max = S_yz # verificar
 S_y_Torcional = (3*(Tal_max^2))
 
@@ -138,7 +138,7 @@ C_temp  = definir_fator_Kt(temperatura)
 C_sup   = definir_fator_Ksup(superficie,S_ut)
 C_conf  = definir_fator_Kconf(confiabilidade)
 
-# dot são as tensoes não corrigidas
+# dot sao as tensoes nao corrigidas
 S_e_dot = 1
 S_f_dot = 1
 #S_e = float(C_carga) * float(C_tam) * float(C_temp) * float(C_sup) * float(C_conf) * S_e_dot
