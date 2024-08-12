@@ -1,3 +1,4 @@
+#   Aula 2
 #   Projeto para tensoes alternadas dimetricas ou completamente reversas
 #------------------------------------------------------------
 #  1. Determinar numero de ciclos n
@@ -24,6 +25,19 @@
 #     atraves do fator de concentracao de tensoes 
 #     em fadiga K_f_I (?), obter a componente real sigma_a
 #           Para Esse item, utilizaremos os casos da aula 1
+#------------------------------------------------------------------------
+with open('Fatores_de_concentracao_de_tensoes_em_fadiga.py','r') as file:
+    definir_fatores = file.read()
+fatores_C = {}
+exec (definir_fatores,fatores_C)
+
+C_carga = fatores_C['C_carga']
+C_tam   = fatores_C['C_tam']
+C_temp  = fatores_C['C_temp']
+C_sup   = fatores_C['C_sup']
+C_conf  = fatores_C['C_conf']
+
+#-------------------------------------------------------------------------
 
 #  7. Determinar as tensoes principais alternadas nas 
 #     localizacoes criticas, ja considerando o efeito de 
