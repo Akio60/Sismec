@@ -62,13 +62,13 @@ else:
 
 #   conversor ksi para Mpa e vice versa
 def ksi2Mpa(ksi):
-    return ksi * 6.8965517241379
+    return float(ksi) * 6.8965517241379
 def Mpa2ksi(Mpa):
-    return Mpa * 0.145038
+    return float(Mpa) * 0.145038
 
 # dot sao as tensoes nao corrigidas
-S_e_dot = 1
-S_f_dot = 1
-S_e = float(C_carga) * float(C_tam) * float(C_temp) * float(C_sup) * float(C_conf) * S_e_dot
-S_f = C_carga * C_tam * C_temp * C_sup * C_conf * S_f_dot
-S_fs = 0,577 * S_f
+#S_e_dot = 1
+#S_f_dot = 1
+#S_e = float(C_carga) * float(C_tam) * float(C_temp) * float(C_sup) * float(C_conf) * S_e_dot
+#S_f = C_carga * C_tam * C_temp * C_sup * C_conf * S_f_dot
+# S_fs = 0,577 * S_f
