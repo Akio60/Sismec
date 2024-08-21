@@ -34,4 +34,13 @@ diam_prim_dp_g1   = mod_gears_mm * num_dent_n_g1
 paso_diam_pd_1    = num_dent_n_g1 / diam_prim_dp_g1
 
 diam_prim_dp_p1   = diam_prim_dp_g1 * razao_vel_m_v1
-diam_prim_dp_p1   = num_dent_n_p1 / paso_diam_pd_1
+diam_prim_dp_p1_dot   = num_dent_n_p1 / paso_diam_pd_1
+
+adendo_a1         = 1.000 / paso_diam_pd_1
+dedendo_b1        = 1.250 / paso_diam_pd_1
+prof_trab_1       = 2.000 / paso_diam_pd_1
+pro_total_1       = 2.250 / paso_diam_pd_1
+esp_circ_ref_1    = 1.571 / paso_diam_pd_1
+raio_arred_1      = 0.300 / paso_diam_pd_1 
+folg_min_1        = 0.250 / paso_diam_pd_1
+larg_min_topo_1   = 0.350 / paso_diam_pd_1
