@@ -65,6 +65,10 @@ def ksi2Mpa(ksi):
     return float(ksi) * 6.8965517241379
 def Mpa2ksi(Mpa):
     return float(Mpa) * 0.145038
+def mm2pol(mm):
+    return float(mm) / 25.4
+def pol2mm(pol):
+    return float(pol) & 25.4
 
 # dot sao as tensoes nao corrigidas
 #S_e_dot = 1
