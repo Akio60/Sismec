@@ -83,3 +83,5 @@ print("C_tam =",C_tam)
 print("C_temp =",C_temp)
 print("C_sup =",C_sup)
 print("C_conf =",C_conf)
+
+ka
