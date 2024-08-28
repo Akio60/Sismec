@@ -1,3 +1,13 @@
+#   Vitor Akio Isawa
+#   Projeto 1 - Sistemas Mecânicos - Dimensionamento de engrenagens
+#       
+#       Dimensionamento geométrico
+#       Analise dinamica
+# 
+#-------------------------------------------------------#
+
+
+
 import math
 import os
 import aula_1
@@ -103,43 +113,37 @@ z_2               = (raio_prim_g1 + adendo_a1) ** 2 - (raio_prim_g1 * math.cos(a
 linha_acao_Z      = (z_1 ** 0.5) + (z_2 ** 0.5) - dist_centros_C * math.sin(ang_pres_phi_rad)
 
 #-------------------------------------------------------#
-# razao_contato_mp  = linha_acao_Z * paso_diam_pd_1 /(math.pi * math.cos(ang_pres_phi_rad))
 
 paso_circ_pc      = math.pi * diam_prim_dp_g1_mm / num_dent_n_g1
 paso_base_pb      = paso_circ_pc * math.cos(ang_pres_phi_rad)
 razao_contato_mp  = linha_acao_Z / paso_base_pb
 
 #-------------------------------------------------------#
-# Note que o torque e inversamente proporcional a velocidade de rotacao
-#--------------------Analise Dinamica-------------------#
-
-pot_W             = hp2W(pot_Hp)
-torque_t_max      = pot_W / cnd_1_rads_min
-torque_t_min      = pot_W / cnd_1_rads_max
 
 raio_prim_p1_m    = raio_prim_p1_mm / 1000   # conversao para m
 
-forca_tang_wt_min = torque_t_min / raio_prim_p1_m
-forca_tang_wt_max = torque_t_max / raio_prim_p1_m
-
-forca_res_w_min   = forca_tang_wt_min / math.cos(ang_pres_phi_rad)
-forca_res_w_max   = forca_tang_wt_max / math.cos(ang_pres_phi_rad)
 
 raio_prim_p1_ft         = m2ft(raio_prim_p1_m)
 velocidade_tang_v_t_max = 2 * math.pi * cnd_1_rpm_max * raio_prim_p1_ft
 velocidade_tang_v_t_min = 2 * math.pi * cnd_1_rpm_min * raio_prim_p1_ft
+
 #considerando uma proximidade de ambas velocidades tang
+# a partir da tabela _ do slide _ aula _
 indice_qualidade_Qv     = 8
-# largura da face pode estar entre 8/pd e 16/pd
-largura_de_face_F = 12 / paso_diam_pd_1
+
+# dado : largura da face pode estar entre 8/pd e 16/pd
+# utilizaremos a media
+largura_de_face_F_pol        = 12 / paso_diam_pd_1
+largura_de_face_F_mm         = pol2mm(largura_de_face_F_pol)
+#-------------------------------------------------------#
 
 print("#-------------------------------------------------------#")
 print("#--------------Dimensionamento geometrico---------------#")
 print("#-------------------------------------------------------#")
-print("Razao engrenamento mg\n", round(razao_engr_mg_1,3) , "")
+print("\nRazao engrenamento mg\n", round(razao_engr_mg_1,3) , "")
 print("Passo diametral pd 1\n",round(paso_diam_pd_1,3) , " dentes / pol")
 print("Diametro primitivo da coroa dpg 1\n",round(diam_prim_dp_g1_mm,3) , " mm")
-print("Adendo a 1\n",round(adendo_a1,3) , " mm")
+print("Adendo  a 1\n",round(adendo_a1,3) , " mm")
 print("Dedendo b 1\n",round(dedendo_b1,3) , " mm")
 print("Folga min na raiz do dente c 1\n",round(folg_min_c1,3) , " mm")
 print("Numero dentes pinhao np 1\n",round(num_dent_n_p1,0) , "dentes")
@@ -149,33 +153,36 @@ print("Diametro externo do pinhao dep 1\n",diam_ext_de_p1, "mm")
 print("Diametro externo do pinhao deg 1\n",diam_ext_de_g1, "mm")
 print("Distancia entre centros C\n",dist_centros_C, "mm")
 print("Comprimento da linha de acao Z\n",round(linha_acao_Z,3), "mm")
-print("Razao de contato [DEVE SER 1 < mp < 2 ] \n",round(razao_contato_mp,3), "")
+print("Razao de contato mp [DEVE SER 1 < mp < 2 ] \n",round(razao_contato_mp,3), "")
 print("indice de qualidade \n", indice_qualidade_Qv)
-print("largura de face F \n", round(largura_de_face_F,3))
+print("largura de face F (12/pd) \n", round(largura_de_face_F_mm,3), "mm")
 
-print("\n Para essa parte somente falta indice de qualidade e a \nlargura da face, a serem definidos a partir do projeto\n cinematico")
-print("#-------------------------------------------------------#")
-print("#--------------------Analise Dinamica-------------------#")
-print("#-------------------------------------------------------#")
-print("Carga tangencial min Wt\n", round(forca_tang_wt_min,3) , "N")
-print("Carga tangencial max Wt\n", round(forca_tang_wt_max,3) , "N")
+#
+#--------------------Analise Dinamica-------------------#
 
-# largura de face deve estar entre 8/pd e 16/pd
+# Note que o torque e inversamente proporcional a velocidade de rotacao
+pot_W             = hp2W(pot_Hp)
+torque_t_max      = pot_W / cnd_1_rads_min
+torque_t_min      = pot_W / cnd_1_rads_max
+forca_tang_wt_min = torque_t_min / raio_prim_p1_m
+forca_tang_wt_max = torque_t_max / raio_prim_p1_m
 
-#fator geometrico de resis flex pinhao / eng
+forca_res_w_min   = forca_tang_wt_min / math.cos(ang_pres_phi_rad)
+forca_res_w_max   = forca_tang_wt_max / math.cos(ang_pres_phi_rad)
 
-# Fator Dinamico Kv
 
-print(velocidade_tang_v_t_max)
-print(velocidade_tang_v_t_min)
+# ---------------------#
+# fator geometrico de resis flex pinhao / eng
+# interlpolado da tabela 1 slide 10 parte 2
+fator_geo_resist_flex_Jp = 0.27  
+fator_geo_resist_flex_Jg = 0.28
 
+# ---------------------#
+# Fator Dinamico Kv S.I.(para 6 < Qv < 11)
 B                   = ((12 - indice_qualidade_Qv) ** (2/3)) / 4  
 A                   = 50 + 56 * (1 - B)
 fator_dinamico_kv_min   = (A / ( A + (200 * velocidade_tang_v_t_max) ** 0.5)) ** B
 fator_dinamico_kv_max   = (A / ( A + (200 * velocidade_tang_v_t_max) ** 0.5)) ** B
-
-print("Fator dinamico Kv min \n", fator_dinamico_kv_min)
-print("Fator dinamico Kv max \n", fator_dinamico_kv_max)
 
 # ---------------------#
 # fator de aplicacao k_a
@@ -183,19 +190,93 @@ print("Fator dinamico Kv max \n", fator_dinamico_kv_max)
 # -> uniforme na maquina motoraa 
 
 fator_aplicacao_k_a = 1.50
-print("Fator aplicacao Kv \n", fator_aplicacao_k_a)
 
 #---------------------#
 # Fato de distribuicao de carga
 # para largura de face <2 in
-fator_distrib_k_m = 1.6
-print("Fator distribuicao de carga Km \n", fator_distrib_k_m)
+fator_distrib_k_m   = 1.6
+
+# ---------------------#
+# Fator de tamanho
+# considerando o tamanho do dente como a soma do dedendo e adendo
+# 7.75mm, consideraremos 1.25
+fator_tamanho_k_s   = 1.25
+
+# ---------------------#
+# Fator de espessura da borda
+# fator utilizado para engrenagens vazadas
+fator_esp_borda_k_b = 1.0
+
+# Fator IDLER (engrenagens intermediarias)
+# 1.42 para engrenagens intermediarias
+# 1.0 para engrenagens fixas
+fator_idler_k_i     = 1.0
 
 
+# Fator de acabamento superficial
+# sem padroes pela AGMA
+fator_acab_supf_c_f = 1.0
+
+# Coeficiente elástico
+# dada a tabela 4 no slide 24 na aula 2
+# 
+# VERIFICAR O USO DO V=0.27
+coef_elastico_c_p_Mpa = 191
 
 
+# Fator geométrico I
+# considerando as equacoes de par externo
+# verificar resultados
+raio_curvatura_pinhao_p_p = ((((raio_prim_p1_m + (1 / paso_diam_pd_1))**2)-((raio_prim_p1_m * math.cos(ang_pres_phi_rad)) ** 2)) ** (1/2)) - (math.pi / paso_diam_pd_1) * math.cos(ang_pres_phi_rad)
+raio_curvatura_engren_p_g = dist_centros_C * math.sin(ang_pres_phi_rad) - raio_curvatura_pinhao_p_p
+fator_geometria_sup_I     = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pinhao_p_p) + (1 / raio_curvatura_engren_p_g)) * diam_prim_dp_p1_mm)
 
 
+# Tensão de flexão no dente do pinhão
 
+
+# Tensão de flexão no dente da engrenagem
+
+
+# Tensão superficial do par
+tensao_contato_sigma_c = coef_elastico_c_p_Mpa * (((forca_tang_wt_max * fator_aplicacao_k_a * fator_distrib_k_m * fator_tamanho_k_s * fator_acab_supf_c_f) / (largura_de_face_F_mm * 1000 * fator_geometria_sup_I * diam_prim_dp_p1_mm * 1000 * fator_dinamico_kv_max) ) ** 0.5)
+
+# Número de ciclos de projeto
+num_ciclos = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max
+
+print("\n#-------------------------------------------------------#")
+print("#--------------------Analise Dinamica-------------------#")
+print("#-------------------------------------------------------#")
+print("\nCarga tangencial min Wt\n", round(forca_tang_wt_min,1) , "N")
+print("Carga tangencial max Wt\n", round(forca_tang_wt_max,1) , "N")
+print("Fator geométrico de resistência a flexão do pinhão Jp\n", round(fator_geo_resist_flex_Jp,3) , "")
+print("Fator geométrico de resistência a flexão do p Jg\n", round(fator_geo_resist_flex_Jg,3) , "")
+print("Fator dinamico Kv e Cv min \n", round(fator_dinamico_kv_min,3) )
+print("Fator dinamico Kv e Cv max \n", round(fator_dinamico_kv_max,3) )
+print("Fator aplicacao Ka e Ca \n", fator_aplicacao_k_a)
+print("Fator distribuicao de carga Km e Cm\n", fator_distrib_k_m)
+print("Fator de tamanho Ks e Cs\n",fator_tamanho_k_s)
+print("Fator de espessura da borda Kb\n",fator_esp_borda_k_b)
+print("Fator idler Ki\n",fator_idler_k_i)
+print("Fator de acabamento superficial Kf\n",fator_acab_supf_c_f)
+print("Coeficiente elastico Cp\n", coef_elastico_c_p_Mpa, " Mpa")
+print("Fator geometrico I\n", round(fator_geometria_sup_I,5))
+print("# Tensão de flexão no dente do pinhão I\n")
+print("# Tensão de flexão no dente da engrenagem I\n")
+print("Tensão superficial do par sigma_c\n",tensao_contato_sigma_c , "Mpa")
+print("Número de ciclos de projeto N_ciclos\n", num_ciclos/1000000,"x 10^6 ciclos")
+print("# Resistência à fadiga de flexão Sfb'\n")
+print("# Fator de vida I\n")
+print("# Fator de temperatura Kt\n")
+print("# Fator de confiabilidade\n")
+print("# Resistência à fadiga de flexão corrigida Sfb\n")
+print("# Resistência à fadiga de superfície Sfc'\n")
+print("# Fator de vida superficial Cl\n")
+print("# Fator de dureza Ch\n")
+print("# Resistência à fadiga de superfície corrigida Sfc\n")
+print("# Coeficiente de segurança de falha por flexao no dente do pinhao Nbp\n")
+print("# Coeficiente de segurança de falha por flexão no dente da engrenagem Nbg\n")
+print("# Coeficiente de segurança de falha superficial\n")
+print("\n#-------------------------------------------------------#")
 
 
