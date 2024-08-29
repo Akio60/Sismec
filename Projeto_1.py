@@ -236,6 +236,8 @@ raio_curvatura_engren_p_g_pol = dist_centros_C_pol * math.sin(ang_pres_phi_rad) 
 fator_geometria_sup_I     = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pinhao_p_p_pol) + (1 / raio_curvatura_engren_p_g_pol)) * diam_prim_dp_p1_pol)
 
 
+
+# ---------------------#
 # Tensão de flexão no dente do pinhão
 
 
@@ -248,8 +250,61 @@ diam_prim_dp_p1_m   = mm2pol(diam_prim_dp_p1_mm)
 coef_elastico_c_p_pa = coef_elastico_c_p_Mpa * 1_000_000
 tensao_contato_sigma_c_pa = coef_elastico_c_p_pa * (((forca_tang_wt_max * fator_aplicacao_k_a * fator_distrib_k_m * fator_tamanho_k_s * fator_acab_supf_c_f) / (largura_de_face_F_m * fator_geometria_sup_I * diam_prim_dp_p1_m * fator_dinamico_kv_max) ) ** 0.5)
 tensao_contato_sigma_c_Mpa = tensao_contato_sigma_c_pa / 1000_000
+
 # Número de ciclos de projeto
 num_ciclos = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max
+
+# -----------------------------#
+# -----------------------------#
+# Resistência à fadiga de flexão Sfb'
+# Equacao dada para grau 1 AGMA conforme o slide 8 da aula 3 de engrenagens
+
+resistencia_fadiga_flexao_Sfb_dot = -274 + 167 * dureza_final_HB - (0.152 * (dureza_final_HB ** 2))
+
+# ---------------------#
+# Fator de vida KL
+# Verificar a figura 12 da parte 3 da aula de engrenagens
+# utilizei uma aproximacao para 1.5 x 10^9 ciclos
+fator_vida_k_L          = 0.85
+
+# ---------------------#
+# Fator de temperatura k_t
+# como a temperatura de 121 C é o limite ( 250F) pode se utilizar 1
+fator_temperatura_k_t   = 1
+
+# ---------------------#
+# Fator de confiabilidade k_r
+# para 90% de confiabilidade, usando a tabela 7 da aula 3 de engrenagens
+fator_confiabilidade_k_r= 0.85
+
+
+# -----------------------------#
+# Resistência à fadiga de flexão corrigida Sfb
+# equacao do slide 3 da aula de engrenagens pt 3
+resistencia_fadiga_flexao_Sfb   = resistencia_fadiga_flexao_Sfb_dot * fator_vida_k_L / (fator_temperatura_k_t * fator_confiabilidade_k_r)
+
+
+# -----------------------------#
+# Resistencia a fadiga de superficie
+# -----------------------------#
+# utilizaremos o grafico referente ao grau 1 da agma 
+# dado na figura 15 do slide 3 da aula de engrenagens
+resistencia_fadiga_superficie_Sfc_dot   = 26_000 + 327 * dureza_final_HB
+
+fator_temperatura_c_t       = fator_temperatura_k_t
+fator_confiabilidade_c_r    = fator_confiabilidade_k_r
+
+# fator de vida cl
+# foi pensado utilizando os dados da tabela 14 da aula 3 de engrenagens
+fator_vida_c_L              = 0.85
+
+# fator de dureza ch
+# sabendo que ambas engrenagens possuem o mesmo material
+# a razao entre as durezas sempre será 1, resultando em :
+faotr_dureza_c_h            = 1
+
+# utilizando os fatores de correcao
+resistencia_fadiga_superficie_Sfc = resistencia_fadiga_superficie_Sfc_dot * fator_vida_c_L * faotr_dureza_c_h / ( fator_temperatura_c_t * fator_confiabilidade_c_r)
 
 print("\n#-------------------------------------------------------#")
 print("#--------------------Analise Dinamica-------------------#")
@@ -268,19 +323,19 @@ print("Fator idler Ki\n",fator_idler_k_i)
 print("Fator de acabamento superficial Kf\n",fator_acab_supf_c_f)
 print("Coeficiente elastico Cp\n", coef_elastico_c_p_Mpa, " Mpa")
 print("Fator geometrico I\n", round(fator_geometria_sup_I,5))
-print("# Tensão de flexão no dente do pinhão I\n")
-print("# Tensão de flexão no dente da engrenagem I\n")
 print("Tensão superficial do par sigma_c\n",tensao_contato_sigma_c_Mpa , "Mpa")
 print("Número de ciclos de projeto N_ciclos\n", num_ciclos/1_000_000,"x 10^6 ciclos")
-print("# Fator de vida I\n")
-print("# Fator de temperatura Kt\n")
-print("# Fator de confiabilidade\n")
-print("# Fator de vida superficial Cl\n")
-print("# Fator de dureza Ch\n")
-print("# Resistência à fadiga de flexão Sfb'\n")
-print("# Resistência à fadiga de flexão corrigida Sfb\n")
-print("# Resistência à fadiga de superfície Sfc'\n")
-print("# Resistência à fadiga de superfície corrigida Sfc\n")
+print("Fator de vida I\n",fator_vida_k_L)
+print("Fator de temperatura Kt\n",fator_temperatura_k_t)
+print("Fator de confiabilidade\n",fator_confiabilidade_k_r)
+print("Fator de vida superficial Cl\n", fator_vida_c_L)
+print("Fator de dureza Ch\n", faotr_dureza_c_h)
+print("# Tensão de flexão no dente do pinhão I\n")
+print("# Tensão de flexão no dente da engrenagem I\n")
+print("Resistência à fadiga de flexão Sfb'\n",resistencia_fadiga_flexao_Sfb_dot)
+print("Resistência à fadiga de flexão corrigida Sfb\n", resistencia_fadiga_flexao_Sfb)
+print("Resistência à fadiga de superfície Sfc'\n", resistencia_fadiga_superficie_Sfc_dot)
+print("Resistência à fadiga de superfície corrigida Sfc\n", resistencia_fadiga_superficie_Sfc)
 print("# Coeficiente de segurança de falha por flexao no dente do pinhao Nbp\n")
 print("# Coeficiente de segurança de falha por flexão no dente da engrenagem Nbg\n")
 print("# Coeficiente de segurança de falha superficial\n")
