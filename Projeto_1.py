@@ -105,12 +105,12 @@ diam_ext_de_g1    = diam_prim_dp_g1_mm + 2 * dedendo_b1
 
 raio_prim_p1_mm   = diam_prim_dp_p1_mm / 2
 raio_prim_g1      = diam_prim_dp_g1_mm / 2
-dist_centros_C    = (raio_prim_p1_mm) + (raio_prim_g1)
+dist_centros_C_mm    = (raio_prim_p1_mm) + (raio_prim_g1)
 
 #-------------------------------------------------------#
 z_1               = (raio_prim_p1_mm + adendo_a1) ** 2 - (raio_prim_p1_mm * math.cos(ang_pres_phi_rad)) ** 2
 z_2               = (raio_prim_g1 + adendo_a1) ** 2 - (raio_prim_g1 * math.cos(ang_pres_phi_rad)) ** 2 
-linha_acao_Z      = (z_1 ** 0.5) + (z_2 ** 0.5) - dist_centros_C * math.sin(ang_pres_phi_rad)
+linha_acao_Z      = (z_1 ** 0.5) + (z_2 ** 0.5) - dist_centros_C_mm * math.sin(ang_pres_phi_rad)
 
 #-------------------------------------------------------#
 
@@ -151,7 +151,7 @@ print("Numero dentes coroa ng 1\n",round(num_dent_n_g1,0) , " dentes")
 print("diametro primitivo pinhao dpp 1\n",round(diam_prim_dp_p1_mm,3) , " mm")  
 print("Diametro externo do pinhao dep 1\n",diam_ext_de_p1, "mm")
 print("Diametro externo do pinhao deg 1\n",diam_ext_de_g1, "mm")
-print("Distancia entre centros C\n",dist_centros_C, "mm")
+print("Distancia entre centros C\n",dist_centros_C_mm, "mm")
 print("Comprimento da linha de acao Z\n",round(linha_acao_Z,3), "mm")
 print("Razao de contato mp [DEVE SER 1 < mp < 2 ] \n",round(razao_contato_mp,3), "")
 print("indice de qualidade \n", indice_qualidade_Qv)
@@ -173,9 +173,10 @@ forca_res_w_max   = forca_tang_wt_max / math.cos(ang_pres_phi_rad)
 
 # ---------------------#
 # fator geometrico de resis flex pinhao / eng
-# interlpolado da tabela 1 slide 10 parte 2
-fator_geo_resist_flex_Jp = 0.27  
-fator_geo_resist_flex_Jg = 0.28
+# interlpolado da tabela 1 slide 10 parte 2 ,HSPTC p 48, g 60
+#interpolando os dados da tabela (aprox.)
+fator_geo_resist_flex_Jp = 0.415  
+fator_geo_resist_flex_Jg = 0.43
 
 # ---------------------#
 # Fator Dinamico Kv S.I.(para 6 < Qv < 11)
@@ -227,9 +228,12 @@ coef_elastico_c_p_Mpa = 191
 # Fator geométrico I
 # considerando as equacoes de par externo
 # verificar resultados
-raio_curvatura_pinhao_p_p = ((((raio_prim_p1_m + (1 / paso_diam_pd_1))**2)-((raio_prim_p1_m * math.cos(ang_pres_phi_rad)) ** 2)) ** (1/2)) - (math.pi / paso_diam_pd_1) * math.cos(ang_pres_phi_rad)
-raio_curvatura_engren_p_g = dist_centros_C * math.sin(ang_pres_phi_rad) - raio_curvatura_pinhao_p_p
-fator_geometria_sup_I     = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pinhao_p_p) + (1 / raio_curvatura_engren_p_g)) * diam_prim_dp_p1_mm)
+raio_prim_p1_pol    = mm2pol(raio_prim_p1_mm)
+dist_centros_C_pol  = mm2pol(dist_centros_C_mm)
+
+raio_curvatura_pinhao_p_p_pol = ((((raio_prim_p1_pol + (1 / paso_diam_pd_1))**2)-((raio_prim_p1_pol * math.cos(ang_pres_phi_rad)) ** 2)) ** (1/2)) - (math.pi / paso_diam_pd_1) * math.cos(ang_pres_phi_rad)
+raio_curvatura_engren_p_g_pol = dist_centros_C_pol * math.sin(ang_pres_phi_rad) - raio_curvatura_pinhao_p_p_pol
+fator_geometria_sup_I     = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pinhao_p_p_pol) + (1 / raio_curvatura_engren_p_g_pol)) * diam_prim_dp_p1_pol)
 
 
 # Tensão de flexão no dente do pinhão
@@ -239,8 +243,11 @@ fator_geometria_sup_I     = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pin
 
 
 # Tensão superficial do par
-tensao_contato_sigma_c = coef_elastico_c_p_Mpa * (((forca_tang_wt_max * fator_aplicacao_k_a * fator_distrib_k_m * fator_tamanho_k_s * fator_acab_supf_c_f) / (largura_de_face_F_mm * 1000 * fator_geometria_sup_I * diam_prim_dp_p1_mm * 1000 * fator_dinamico_kv_max) ) ** 0.5)
-
+largura_de_face_F_m = mm2pol(largura_de_face_F_mm)
+diam_prim_dp_p1_m   = mm2pol(diam_prim_dp_p1_mm)
+coef_elastico_c_p_pa = coef_elastico_c_p_Mpa * 1_000_000
+tensao_contato_sigma_c_pa = coef_elastico_c_p_pa * (((forca_tang_wt_max * fator_aplicacao_k_a * fator_distrib_k_m * fator_tamanho_k_s * fator_acab_supf_c_f) / (largura_de_face_F_m * fator_geometria_sup_I * diam_prim_dp_p1_m * fator_dinamico_kv_max) ) ** 0.5)
+tensao_contato_sigma_c_Mpa = tensao_contato_sigma_c_pa / 1000_000
 # Número de ciclos de projeto
 num_ciclos = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max
 
@@ -263,20 +270,21 @@ print("Coeficiente elastico Cp\n", coef_elastico_c_p_Mpa, " Mpa")
 print("Fator geometrico I\n", round(fator_geometria_sup_I,5))
 print("# Tensão de flexão no dente do pinhão I\n")
 print("# Tensão de flexão no dente da engrenagem I\n")
-print("Tensão superficial do par sigma_c\n",tensao_contato_sigma_c , "Mpa")
-print("Número de ciclos de projeto N_ciclos\n", num_ciclos/1000000,"x 10^6 ciclos")
-print("# Resistência à fadiga de flexão Sfb'\n")
+print("Tensão superficial do par sigma_c\n",tensao_contato_sigma_c_Mpa , "Mpa")
+print("Número de ciclos de projeto N_ciclos\n", num_ciclos/1_000_000,"x 10^6 ciclos")
 print("# Fator de vida I\n")
 print("# Fator de temperatura Kt\n")
 print("# Fator de confiabilidade\n")
-print("# Resistência à fadiga de flexão corrigida Sfb\n")
-print("# Resistência à fadiga de superfície Sfc'\n")
 print("# Fator de vida superficial Cl\n")
 print("# Fator de dureza Ch\n")
+print("# Resistência à fadiga de flexão Sfb'\n")
+print("# Resistência à fadiga de flexão corrigida Sfb\n")
+print("# Resistência à fadiga de superfície Sfc'\n")
 print("# Resistência à fadiga de superfície corrigida Sfc\n")
 print("# Coeficiente de segurança de falha por flexao no dente do pinhao Nbp\n")
 print("# Coeficiente de segurança de falha por flexão no dente da engrenagem Nbg\n")
 print("# Coeficiente de segurança de falha superficial\n")
 print("\n#-------------------------------------------------------#")
 
+print(num_dent_n_p1/num_dent_n_g1)
 
