@@ -10,8 +10,6 @@
 
 import math
 import os
-import aula_1
-import aula_2
 
 os.system('cls')
 
@@ -36,9 +34,10 @@ def rpm2rad(RPM):
     return RPM * 2 * math.pi /60
 def m2ft(m):
     return m * 3.28084
+
+
 #-------------------------------------------------------#
 # Dados do sistema
-
 # cnd -> condicao 1 : pinhao 1 e coroa 1
 # cnd -> condicao 2 : pinhao 2 e coroa 2
 
@@ -66,7 +65,9 @@ temp_operacao_C    = 121
 confiabilidade     = 90     # %
 razao_vel_m_v1     = 0.8
 #-------------------------------------------------------#
-
+#
+#---------------desenvovilmento geometrico--------------#
+#
 #   Calculo da geometria das engrenagens do par 1
 
 # a partir da razao de velocidades mv na condicao 1
@@ -140,30 +141,9 @@ indice_qualidade_Qv     = 8
 largura_de_face_F_pol        = 12 / paso_diam_pd_1
 largura_de_face_F_mm         = pol2mm(largura_de_face_F_pol)
 #-------------------------------------------------------#
-
-print("#-------------------------------------------------------#")
-print("#--------------Dimensionamento geometrico---------------#")
-print("#-------------------------------------------------------#")
-print("\nRazao engrenamento mg\n",                  round(razao_engr_mg_1,3) , "")
-print("Passo diametral pd 1\n",                     round(paso_diam_pd_1,3) , " dentes / pol")
-print("Diametro primitivo da coroa dpg 1\n",        round(diam_prim_dp_g1_mm,3) , " mm")
-print("Adendo  a 1\n",                              round(adendo_a1,3) , " mm")
-print("Dedendo b 1\n",                              round(dedendo_b1,3) , " mm")
-print("Folga min na raiz do dente c 1\n",           round(folg_min_c1,3) , " mm")
-print("Numero dentes pinhao np 1\n",                round(num_dent_n_p1,0) , "dentes")
-print("Numero dentes coroa ng 1\n",                 round(num_dent_n_g1,0) , " dentes")
-print("Diametro primitivo pinhao dpp 1\n",          round(diam_prim_dp_p1_mm,3) , " mm")  
-print("Diametro externo do pinhao dep 1\n",         diam_ext_de_p1, "mm")
-print("Diametro externo do pinhao deg 1\n",         diam_ext_de_g1, "mm")
-print("Distancia entre centros C\n",                dist_centros_C_mm, "mm")
-print("Comprimento da linha de acao Z\n",           round(linha_acao_Z,3), "mm")
-print("Razao de contato mp [DEVE SER 1 < mp < 2 ] \n",round(razao_contato_mp,3), "")
-print("indice de qualidade Q_v\n",                  indice_qualidade_Qv)
-print("Largura de face F (12/pd) \n",               round(largura_de_face_F_mm,3), "mm")
-
 #
 #--------------------Analise Dinamica-------------------#
-
+#
 # Note que o torque e inversamente proporcional a velocidade de rotacao
 pot_W             = hp2W(pot_Hp)
 torque_t_max      = pot_W / cnd_1_rads_min
@@ -174,6 +154,8 @@ forca_tang_wt_max = torque_t_max / raio_prim_p1_m
 forca_res_w_min   = forca_tang_wt_min / math.cos(ang_pres_phi_rad)
 forca_res_w_max   = forca_tang_wt_max / math.cos(ang_pres_phi_rad)
 
+# Número de ciclos de projeto
+num_ciclos = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max
 
 # ---------------------#
 # fator geometrico de resis flex pinhao / eng
@@ -239,8 +221,6 @@ raio_curvatura_pinhao_p_p_pol = ((((raio_prim_p1_pol + (1 / paso_diam_pd_1))**2)
 raio_curvatura_engren_p_g_pol = dist_centros_C_pol * math.sin(ang_pres_phi_rad) - raio_curvatura_pinhao_p_p_pol
 fator_geometria_sup_I     = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pinhao_p_p_pol) + (1 / raio_curvatura_engren_p_g_pol)) * diam_prim_dp_p1_pol)
 
-
-
 # ---------------------#
 # Tensão de flexão no dente do pinhão
 
@@ -255,10 +235,7 @@ coef_elastico_c_p_pa = coef_elastico_c_p_Mpa * 1_000_000
 tensao_contato_sigma_c_pa = coef_elastico_c_p_pa * (((forca_tang_wt_max * fator_aplicacao_k_a * fator_distrib_k_m * fator_tamanho_k_s * fator_acab_supf_c_f) / (largura_de_face_F_m * fator_geometria_sup_I * diam_prim_dp_p1_m * fator_dinamico_kv_max) ) ** 0.5)
 tensao_contato_sigma_c_Mpa = tensao_contato_sigma_c_pa / 1_000_000
 
-# Número de ciclos de projeto
-num_ciclos = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max
 
-# -----------------------------#
 # -----------------------------#
 # Resistência à fadiga de flexão Sfb'
 # Equacao dada para grau 1 AGMA conforme o slide 8 da aula 3 de engrenagens
@@ -316,6 +293,26 @@ resistencia_fadiga_superficie_Sfc_psi = Mpa2psi(resistencia_fadiga_superficie_Sf
 
 
 
+
+print("#-------------------------------------------------------#")
+print("#--------------Dimensionamento geometrico---------------#")
+print("#-------------------------------------------------------#")
+print("\nRazao engrenamento mg\n",                  round(razao_engr_mg_1,3) , "")
+print("Passo diametral pd 1\n",                     round(paso_diam_pd_1,3) , " dentes / pol")
+print("Diametro primitivo da coroa dpg 1\n",        round(diam_prim_dp_g1_mm,3) , " mm")
+print("Adendo  a 1\n",                              round(adendo_a1,3) , " mm")
+print("Dedendo b 1\n",                              round(dedendo_b1,3) , " mm")
+print("Folga min na raiz do dente c 1\n",           round(folg_min_c1,3) , " mm")
+print("Numero dentes pinhao np 1\n",                round(num_dent_n_p1,0) , "dentes")
+print("Numero dentes coroa ng 1\n",                 round(num_dent_n_g1,0) , " dentes")
+print("Diametro primitivo pinhao dpp 1\n",          round(diam_prim_dp_p1_mm,3) , " mm")  
+print("Diametro externo do pinhao dep 1\n",         diam_ext_de_p1, "mm")
+print("Diametro externo do pinhao deg 1\n",         diam_ext_de_g1, "mm")
+print("Distancia entre centros C\n",                dist_centros_C_mm, "mm")
+print("Comprimento da linha de acao Z\n",           round(linha_acao_Z,3), "mm")
+print("Razao de contato mp [DEVE SER 1 < mp < 2 ] \n",round(razao_contato_mp,3), "")
+print("indice de qualidade Q_v\n",                  indice_qualidade_Qv)
+print("Largura de face F (12/pd) \n",               round(largura_de_face_F_mm,3), "mm")
 
 
 
