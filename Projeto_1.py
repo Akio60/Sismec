@@ -20,6 +20,10 @@ def ksi2Mpa(ksi):
     return float(ksi) * 6.8965517241379
 def Mpa2ksi(Mpa):
     return float(Mpa) * 0.145038
+def psi2Mpa(psi):
+    return float(psi) * 0.006894744825494
+def Mpa2psi(Mpa):
+    return float(Mpa) * 145.038
 def mm2pol(mm):
     return float(mm) / 25.4
 def pol2mm(pol):
@@ -140,22 +144,22 @@ largura_de_face_F_mm         = pol2mm(largura_de_face_F_pol)
 print("#-------------------------------------------------------#")
 print("#--------------Dimensionamento geometrico---------------#")
 print("#-------------------------------------------------------#")
-print("\nRazao engrenamento mg\n", round(razao_engr_mg_1,3) , "")
-print("Passo diametral pd 1\n",round(paso_diam_pd_1,3) , " dentes / pol")
-print("Diametro primitivo da coroa dpg 1\n",round(diam_prim_dp_g1_mm,3) , " mm")
-print("Adendo  a 1\n",round(adendo_a1,3) , " mm")
-print("Dedendo b 1\n",round(dedendo_b1,3) , " mm")
-print("Folga min na raiz do dente c 1\n",round(folg_min_c1,3) , " mm")
-print("Numero dentes pinhao np 1\n",round(num_dent_n_p1,0) , "dentes")
-print("Numero dentes coroa ng 1\n",round(num_dent_n_g1,0) , " dentes")
-print("diametro primitivo pinhao dpp 1\n",round(diam_prim_dp_p1_mm,3) , " mm")  
-print("Diametro externo do pinhao dep 1\n",diam_ext_de_p1, "mm")
-print("Diametro externo do pinhao deg 1\n",diam_ext_de_g1, "mm")
-print("Distancia entre centros C\n",dist_centros_C_mm, "mm")
-print("Comprimento da linha de acao Z\n",round(linha_acao_Z,3), "mm")
+print("\nRazao engrenamento mg\n",                  round(razao_engr_mg_1,3) , "")
+print("Passo diametral pd 1\n",                     round(paso_diam_pd_1,3) , " dentes / pol")
+print("Diametro primitivo da coroa dpg 1\n",        round(diam_prim_dp_g1_mm,3) , " mm")
+print("Adendo  a 1\n",                              round(adendo_a1,3) , " mm")
+print("Dedendo b 1\n",                              round(dedendo_b1,3) , " mm")
+print("Folga min na raiz do dente c 1\n",           round(folg_min_c1,3) , " mm")
+print("Numero dentes pinhao np 1\n",                round(num_dent_n_p1,0) , "dentes")
+print("Numero dentes coroa ng 1\n",                 round(num_dent_n_g1,0) , " dentes")
+print("Diametro primitivo pinhao dpp 1\n",          round(diam_prim_dp_p1_mm,3) , " mm")  
+print("Diametro externo do pinhao dep 1\n",         diam_ext_de_p1, "mm")
+print("Diametro externo do pinhao deg 1\n",         diam_ext_de_g1, "mm")
+print("Distancia entre centros C\n",                dist_centros_C_mm, "mm")
+print("Comprimento da linha de acao Z\n",           round(linha_acao_Z,3), "mm")
 print("Razao de contato mp [DEVE SER 1 < mp < 2 ] \n",round(razao_contato_mp,3), "")
-print("indice de qualidade \n", indice_qualidade_Qv)
-print("largura de face F (12/pd) \n", round(largura_de_face_F_mm,3), "mm")
+print("indice de qualidade Q_v\n",                  indice_qualidade_Qv)
+print("Largura de face F (12/pd) \n",               round(largura_de_face_F_mm,3), "mm")
 
 #
 #--------------------Analise Dinamica-------------------#
@@ -245,11 +249,11 @@ fator_geometria_sup_I     = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pin
 
 
 # Tensão superficial do par
-largura_de_face_F_m = mm2pol(largura_de_face_F_mm)
-diam_prim_dp_p1_m   = mm2pol(diam_prim_dp_p1_mm)
+largura_de_face_F_m = largura_de_face_F_mm  / 1_000
+diam_prim_dp_p1_m   = diam_prim_dp_p1_mm    / 1_000
 coef_elastico_c_p_pa = coef_elastico_c_p_Mpa * 1_000_000
 tensao_contato_sigma_c_pa = coef_elastico_c_p_pa * (((forca_tang_wt_max * fator_aplicacao_k_a * fator_distrib_k_m * fator_tamanho_k_s * fator_acab_supf_c_f) / (largura_de_face_F_m * fator_geometria_sup_I * diam_prim_dp_p1_m * fator_dinamico_kv_max) ) ** 0.5)
-tensao_contato_sigma_c_Mpa = tensao_contato_sigma_c_pa / 1000_000
+tensao_contato_sigma_c_Mpa = tensao_contato_sigma_c_pa / 1_000_000
 
 # Número de ciclos de projeto
 num_ciclos = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max
@@ -258,8 +262,8 @@ num_ciclos = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max
 # -----------------------------#
 # Resistência à fadiga de flexão Sfb'
 # Equacao dada para grau 1 AGMA conforme o slide 8 da aula 3 de engrenagens
-
-resistencia_fadiga_flexao_Sfb_dot = -274 + 167 * dureza_final_HB - (0.152 * (dureza_final_HB ** 2))
+resistencia_fadiga_flexao_Sfb_dot_psi = -274 + 167 * dureza_final_HB - (0.152 * (dureza_final_HB ** 2))
+resistencia_fadiga_flexao_Sfb_dot_mpa = psi2Mpa(resistencia_fadiga_flexao_Sfb_dot_psi)
 
 # ---------------------#
 # Fator de vida KL
@@ -281,15 +285,17 @@ fator_confiabilidade_k_r= 0.85
 # -----------------------------#
 # Resistência à fadiga de flexão corrigida Sfb
 # equacao do slide 3 da aula de engrenagens pt 3
-resistencia_fadiga_flexao_Sfb   = resistencia_fadiga_flexao_Sfb_dot * fator_vida_k_L / (fator_temperatura_k_t * fator_confiabilidade_k_r)
-
+resistencia_fadiga_flexao_Sfb_mpa   = resistencia_fadiga_flexao_Sfb_dot_mpa * fator_vida_k_L / (fator_temperatura_k_t * fator_confiabilidade_k_r)
+resistencia_fadiga_flexao_Sfb_psi   = Mpa2psi(resistencia_fadiga_flexao_Sfb_mpa)
 
 # -----------------------------#
 # Resistencia a fadiga de superficie
 # -----------------------------#
 # utilizaremos o grafico referente ao grau 1 da agma 
 # dado na figura 15 do slide 3 da aula de engrenagens
-resistencia_fadiga_superficie_Sfc_dot   = 26_000 + 327 * dureza_final_HB
+# equacao com HB da resultado em psi
+resistencia_fadiga_superficie_Sfc_dot_psi   = 26_000 + 327 * dureza_final_HB
+resistencia_fadiga_superficie_Sfc_dot_mpa   = psi2Mpa(resistencia_fadiga_superficie_Sfc_dot_psi)
 
 fator_temperatura_c_t       = fator_temperatura_k_t
 fator_confiabilidade_c_r    = fator_confiabilidade_k_r
@@ -304,42 +310,49 @@ fator_vida_c_L              = 0.85
 faotr_dureza_c_h            = 1
 
 # utilizando os fatores de correcao
-resistencia_fadiga_superficie_Sfc = resistencia_fadiga_superficie_Sfc_dot * fator_vida_c_L * faotr_dureza_c_h / ( fator_temperatura_c_t * fator_confiabilidade_c_r)
+resistencia_fadiga_superficie_Sfc_mpa = resistencia_fadiga_superficie_Sfc_dot_mpa * fator_vida_c_L * faotr_dureza_c_h / ( fator_temperatura_c_t * fator_confiabilidade_c_r)
+resistencia_fadiga_superficie_Sfc_psi = Mpa2psi(resistencia_fadiga_superficie_Sfc_mpa)
+
+
+
+
+
+
 
 print("\n#-------------------------------------------------------#")
 print("#--------------------Analise Dinamica-------------------#")
 print("#-------------------------------------------------------#")
-print("\nCarga tangencial min Wt\n", round(forca_tang_wt_min,1) , "N")
-print("Carga tangencial max Wt\n", round(forca_tang_wt_max,1) , "N")
-print("Fator geométrico de resistência a flexão do pinhão Jp\n", round(fator_geo_resist_flex_Jp,3) , "")
-print("Fator geométrico de resistência a flexão do p Jg\n", round(fator_geo_resist_flex_Jg,3) , "")
-print("Fator dinamico Kv e Cv min \n", round(fator_dinamico_kv_min,3) )
-print("Fator dinamico Kv e Cv max \n", round(fator_dinamico_kv_max,3) )
-print("Fator aplicacao Ka e Ca \n", fator_aplicacao_k_a)
-print("Fator distribuicao de carga Km e Cm\n", fator_distrib_k_m)
-print("Fator de tamanho Ks e Cs\n",fator_tamanho_k_s)
-print("Fator de espessura da borda Kb\n",fator_esp_borda_k_b)
-print("Fator idler Ki\n",fator_idler_k_i)
-print("Fator de acabamento superficial Kf\n",fator_acab_supf_c_f)
-print("Coeficiente elastico Cp\n", coef_elastico_c_p_Mpa, " Mpa")
-print("Fator geometrico I\n", round(fator_geometria_sup_I,5))
-print("Tensão superficial do par sigma_c\n",tensao_contato_sigma_c_Mpa , "Mpa")
-print("Número de ciclos de projeto N_ciclos\n", num_ciclos/1_000_000,"x 10^6 ciclos")
-print("Fator de vida I\n",fator_vida_k_L)
-print("Fator de temperatura Kt\n",fator_temperatura_k_t)
-print("Fator de confiabilidade\n",fator_confiabilidade_k_r)
-print("Fator de vida superficial Cl\n", fator_vida_c_L)
-print("Fator de dureza Ch\n", faotr_dureza_c_h)
-print("# Tensão de flexão no dente do pinhão I\n")
-print("# Tensão de flexão no dente da engrenagem I\n")
-print("Resistência à fadiga de flexão Sfb'\n",resistencia_fadiga_flexao_Sfb_dot)
-print("Resistência à fadiga de flexão corrigida Sfb\n", resistencia_fadiga_flexao_Sfb)
-print("Resistência à fadiga de superfície Sfc'\n", resistencia_fadiga_superficie_Sfc_dot)
-print("Resistência à fadiga de superfície corrigida Sfc\n", resistencia_fadiga_superficie_Sfc)
+print("\nCarga tangencial min Wt\n",                                round(forca_tang_wt_min,1) , "N")
+print("Carga tangencial max Wt\n",                                  round(forca_tang_wt_max,1) , "N")
+print("Fator geométrico de resistência a flexão do pinhão Jp\n",    round(fator_geo_resist_flex_Jp,3) , "")
+print("Fator geométrico de resistência a flexão do p Jg\n",         round(fator_geo_resist_flex_Jg,3) , "")
+print("Fator dinamico Kv e Cv min \n",                              round(fator_dinamico_kv_min,3) )
+print("Fator dinamico Kv e Cv max \n",                              round(fator_dinamico_kv_max,3) )
+print("Fator aplicacao Ka e Ca \n",                                 fator_aplicacao_k_a)
+print("Fator distribuicao de carga Km e Cm\n",                      fator_distrib_k_m)
+print("Fator de tamanho Ks e Cs\n",                                 fator_tamanho_k_s)
+print("Fator de espessura da borda Kb\n",                           fator_esp_borda_k_b)
+print("Fator idler Ki\n",                                           fator_idler_k_i)
+print("Fator de acabamento superficial Kf\n",                       fator_acab_supf_c_f)
+print("Coeficiente elastico Cp\n",                                  coef_elastico_c_p_Mpa, " Mpa")
+print("Fator geometrico I\n",                                       round(fator_geometria_sup_I,5))
+print("Tensão superficial do par sigma_c\n",                        round(tensao_contato_sigma_c_Mpa,2) , "Mpa")
+print("Número de ciclos de projeto N_ciclos\n",                     num_ciclos/1_000_000,"x 10^6 ciclos")
+print("Fator de vida kl\n",                                         fator_vida_k_L)
+print("Fator de vida superficial Cl\n",                             fator_vida_c_L)
+print("Fator de temperatura Kt\n",                                  fator_temperatura_k_t)
+print("Fator de confiabilidade\n",                                  fator_confiabilidade_k_r)
+print("Fator de dureza Ch\n",                                       faotr_dureza_c_h)
+print("# Tensão de flexão no dente do pinhão I\n",                  )
+print("# Tensão de flexão no dente da engrenagem I\n",              )
+print("Resistência à fadiga de flexão Sfb'\n",                      round(resistencia_fadiga_flexao_Sfb_dot_mpa,2) , "Mpa" )
+print("Resistência à fadiga de flexão corrigida Sfb\n",             round(resistencia_fadiga_flexao_Sfb_mpa,2) , "Mpa"  )
+print("Resistência à fadiga de superfície Sfc'\n",                  round(resistencia_fadiga_superficie_Sfc_dot_mpa,2) , "Mpa" )
+print("Resistência à fadiga de superfície corrigida Sfc\n",         round(resistencia_fadiga_superficie_Sfc_mpa,2) , "Mpa" )
 print("# Coeficiente de segurança de falha por flexao no dente do pinhao Nbp\n")
 print("# Coeficiente de segurança de falha por flexão no dente da engrenagem Nbg\n")
-print("# Coeficiente de segurança de falha superficial\n")
-print("\n#-------------------------------------------------------#")
+print("# Coeficiente de segurança de falha superficial\n",         )
+print("\n#-------------------------------------------------------#",    )
 
 print(num_dent_n_p1/num_dent_n_g1)
 
