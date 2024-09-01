@@ -6,14 +6,12 @@
 # 
 #-------------------------------------------------------#
 
-
-
 import math
 import os
 
 os.system('cls')
 
-#   conversor ksi para Mpa e vice versa
+#   conversores de unidade
 def ksi2Mpa(ksi):
     return float(ksi) * 6.8965517241379
 def Mpa2ksi(Mpa):
@@ -110,18 +108,18 @@ diam_ext_de_g1    = diam_prim_dp_g1_mm + 2 * dedendo_b1
 
 raio_prim_p1_mm   = diam_prim_dp_p1_mm / 2
 raio_prim_g1      = diam_prim_dp_g1_mm / 2
-dist_centros_C_mm    = (raio_prim_p1_mm) + (raio_prim_g1)
+dist_centros_C_mm = (raio_prim_p1_mm) + (raio_prim_g1)
 
 #-------------------------------------------------------#
 z_1               = (raio_prim_p1_mm + adendo_a1) ** 2 - (raio_prim_p1_mm * math.cos(ang_pres_phi_rad)) ** 2
-z_2               = (raio_prim_g1 + adendo_a1) ** 2 - (raio_prim_g1 * math.cos(ang_pres_phi_rad)) ** 2 
-linha_acao_Z      = (z_1 ** 0.5) + (z_2 ** 0.5) - dist_centros_C_mm * math.sin(ang_pres_phi_rad)
+z_2               = (raio_prim_g1    + adendo_a1) ** 2 - (raio_prim_g1 * math.cos(ang_pres_phi_rad)) ** 2 
+linha_acao_Z      = (z_1 ** 0.5)  +  (z_2 ** 0.5) -  dist_centros_C_mm * math.sin(ang_pres_phi_rad)
 
 #-------------------------------------------------------#
 
 paso_circ_pc      = math.pi * diam_prim_dp_g1_mm / num_dent_n_g1
-paso_base_pb      = paso_circ_pc * math.cos(ang_pres_phi_rad)
-razao_contato_mp  = linha_acao_Z / paso_base_pb
+paso_base_pb      = paso_circ_pc     *      math.cos(ang_pres_phi_rad)
+razao_contato_mp  = linha_acao_Z     /      paso_base_pb
 
 #-------------------------------------------------------#
 
@@ -138,8 +136,10 @@ indice_qualidade_Qv     = 8
 
 # dado : largura da face pode estar entre 8/pd e 16/pd
 # utilizaremos a media
-largura_de_face_F_pol        = 12 / paso_diam_pd_1
-largura_de_face_F_mm         = pol2mm(largura_de_face_F_pol)
+largura_de_face_F_pol   = 12 / paso_diam_pd_1
+largura_de_face_F_mm    = pol2mm(largura_de_face_F_pol)    
+
+
 #-------------------------------------------------------#
 #
 #--------------------Analise Dinamica-------------------#
@@ -350,6 +350,3 @@ print("# Coeficiente de segurança de falha por flexao no dente do pinhao Nbp\n"
 print("# Coeficiente de segurança de falha por flexão no dente da engrenagem Nbg\n")
 print("# Coeficiente de segurança de falha superficial\n",         )
 print("\n#-------------------------------------------------------#",    )
-
-print(num_dent_n_p1/num_dent_n_g1)
-
