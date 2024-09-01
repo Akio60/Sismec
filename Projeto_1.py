@@ -350,3 +350,4 @@ print("# Coeficiente de segurança de falha por flexao no dente do pinhao Nbp\n"
 print("# Coeficiente de segurança de falha por flexão no dente da engrenagem Nbg\n")
 print("# Coeficiente de segurança de falha superficial\n",         )
 print("\n#-------------------------------------------------------#",    )
+#
