@@ -1,11 +1,12 @@
 #   Vitor Akio Isawa
 #   Projeto 1 - Sistemas Mecânicos - Dimensionamento de engrenagens
 #       
+#   Analise do segundo par engrenado
+#
 #       Dimensionamento geométrico
 #       Analise dinamica
 # 
 #-------------------------------------------------------#
-
 import math
 import os
 
@@ -46,18 +47,15 @@ def ftmin2ms(ftmin):
 
 material           = 'aco'
 pot_Hp             = 5
-cnd_1_rpm_min      = 500
-cnd_1_rpm_max      = 600
+cnd_1_rpm_min      = 700
+cnd_1_rpm_max      = 700
 cnd_1_rads_min     = rpm2rad(cnd_1_rpm_min)
 cnd_1_rads_max     = rpm2rad(cnd_1_rpm_max)
-cnd_2_rpm          = 1000
 ang_pres_phi       = 20
 ang_pres_phi_rad   = angle2rad(ang_pres_phi)
 modulo_mm          = 3
 num_dent_n_g1      = 60
 num_dent_n_p2      = 43 
-lim_res_fadg_Se_Mpa= 700    #dado do slide de teoria de dalha por fadiga
-lim_res_fadg_Sut_Mpa= lim_res_fadg_Se_Mpa / 0.5
 E_Gpa              = 190
 v                  = 0.27
 grau_AGMA          = 1
@@ -66,6 +64,8 @@ temp_vida_anos     = 5
 temp_operacao_C    = 121
 confiabilidade     = 90     # %
 razao_vel_m_v1     = 0.8
+dist_centros_C_mm  = 162.0
+dist_centros_C_pol = mm2pol(dist_centros_C_mm)
 
 #-------------------------------------------------------#
 #
@@ -74,33 +74,29 @@ razao_vel_m_v1     = 0.8
 #-------------------------------------------------------#
 
 # a partir da razao de velocidades mv na condicao 1
-razao_engr_mg_1   = 1 / razao_vel_m_v1
-num_dent_n_p1     = num_dent_n_g1 / razao_engr_mg_1
+diam_prim_dp_p_mm   =  num_dent_n_p2 * modulo_mm
+diam_prim_dp_p_pol  = mm2pol(diam_prim_dp_p_mm)
+diam_prim_dp_g_mm   = 2 * ( dist_centros_C_mm -  (diam_prim_dp_p_mm / 2) )  
+diam_prim_dp_g_pol  = mm2pol(diam_prim_dp_g_mm)
+diam_prim_dp_g_m    = diam_prim_dp_g_mm / 1000
 
 #-------------------------------------------------------#
-# A unidade de saida do passo diametral deve ser em num_dentes/pol
-# a fim de facilitar as especificacoes de engrenagens
-diam_prim_dp_g1_mm  = modulo_mm * num_dent_n_g1
-diam_prim_dp_g1_pol = mm2pol(diam_prim_dp_g1_mm)
-diam_prim_dp_g1_m   = diam_prim_dp_g1_mm / 1000
-
-diam_prim_dp_p1_pol = diam_prim_dp_g1_pol * razao_vel_m_v1
-diam_prim_dp_p1_mm  = pol2mm(diam_prim_dp_p1_pol)
+paso_diam_pd      = num_dent_n_p2 / diam_prim_dp_p_pol
 
 #-------------------------------------------------------#
-paso_diam_pd_1      = num_dent_n_g1 / diam_prim_dp_g1_pol
+num_dent_n_g2     = paso_diam_pd * diam_prim_dp_g_pol
 
 #-------------------------------------------------------#
 # Dados da tabela do slide 17 do arquivo ENGRENAGENS CILINDRICAS DE DENTES RETOS - Parte 1.pdf
 
-adendo_a1_pol         = 1.000 / paso_diam_pd_1
-dedendo_b1_pol        = 1.250 / paso_diam_pd_1
-prof_trab_1_pol       = 2.000 / paso_diam_pd_1
-pro_total_1_pol       = 2.250 / paso_diam_pd_1
-esp_circ_ref_1_pol    = 1.571 / paso_diam_pd_1
-raio_arred_1_pol      = 0.300 / paso_diam_pd_1 
-folg_min_c1_pol       = 0.250 / paso_diam_pd_1
-larg_min_topo_1_pol   = 0.250 / paso_diam_pd_1
+adendo_a1_pol         = 1.000 / paso_diam_pd
+dedendo_b1_pol        = 1.250 / paso_diam_pd
+prof_trab_1_pol       = 2.000 / paso_diam_pd
+pro_total_1_pol       = 2.250 / paso_diam_pd
+esp_circ_ref_1_pol    = 1.571 / paso_diam_pd
+raio_arred_1_pol      = 0.300 / paso_diam_pd 
+folg_min_c1_pol       = 0.250 / paso_diam_pd
+larg_min_topo_1_pol   = 0.250 / paso_diam_pd
 
 # conversao para mm
 adendo_a1_mm         = pol2mm(adendo_a1_pol)
@@ -113,22 +109,19 @@ folg_min_c1_mm       = pol2mm(folg_min_c1_pol)
 larg_min_topo_1_mm   = pol2mm(larg_min_topo_1_pol)
 
 #-------------------------------------------------------#
-diam_ext_de_p1_mm = diam_prim_dp_p1_mm + 2 * dedendo_b1_mm
-diam_ext_de_g1_mm = diam_prim_dp_g1_mm + 2 * dedendo_b1_mm
+diam_ext_de_p1_mm = diam_prim_dp_p_mm + 2 * dedendo_b1_mm
+diam_ext_de_g1_mm = diam_prim_dp_g_mm + 2 * dedendo_b1_mm
 
 #-------------------------------------------------------#
-raio_prim_p1_mm   = diam_prim_dp_p1_mm / 2
+raio_prim_p1_mm   = diam_prim_dp_p_mm / 2
 raio_prim_p1_m    = raio_prim_p1_mm / 1000   # conversao para m
 raio_prim_p1_ft   = m2ft(raio_prim_p1_m)
-raio_prim_p1_pol    = mm2pol(raio_prim_p1_mm)
+raio_prim_p1_pol  = mm2pol(raio_prim_p1_mm)
 
 #-------------------------------------------------------#
-raio_prim_g1_mm   = diam_prim_dp_g1_mm / 2
+raio_prim_g1_mm   = diam_prim_dp_g_mm / 2
 raio_prim_g1_ft   = mm2ft(raio_prim_g1_mm)
 
-#-------------------------------------------------------#
-dist_centros_C_mm = (raio_prim_p1_mm) + (raio_prim_g1_mm)
-dist_centros_C_pol  = mm2pol(dist_centros_C_mm)
 
 #-------------------------------------------------------#
 z_1               = (raio_prim_p1_mm + adendo_a1_mm) ** 2 - (raio_prim_p1_mm * math.cos(ang_pres_phi_rad)) ** 2
@@ -136,7 +129,7 @@ z_2               = (raio_prim_g1_mm + adendo_a1_mm) ** 2 - (raio_prim_g1_mm * m
 linha_acao_Z      = (z_1 ** 0.5) + (z_2 ** 0.5) - dist_centros_C_mm * math.sin(ang_pres_phi_rad)
 
 #-------------------------------------------------------#
-paso_circ_pc      = math.pi * diam_prim_dp_g1_mm / num_dent_n_g1
+paso_circ_pc      = math.pi * diam_prim_dp_g_mm / num_dent_n_g1
 
 #-------------------------------------------------------#
 paso_base_pb      = paso_circ_pc * math.cos(ang_pres_phi_rad)
@@ -157,7 +150,7 @@ indice_qualidade_Qv            = 9
 #-------------------------------------------------------#
 # dado : largura da face pode estar entre 8/pd e 16/pd
 # utilizaremos a media
-largura_de_face_F_pol          = 12 / paso_diam_pd_1
+largura_de_face_F_pol          = 8/ paso_diam_pd
 largura_de_face_F_mm           = pol2mm(largura_de_face_F_pol)
 largura_de_face_F_m            = largura_de_face_F_mm / 1000
 
@@ -243,9 +236,9 @@ coef_elastico_c_p_pa    = coef_elastico_c_p_Mpa * 1000_000
 # Fator geométrico I
 # considerando as equacoes de par externo
 # verificar resultados
-raio_curvatura_pinhao_p_p_pol = ((((raio_prim_p1_pol + (1 / paso_diam_pd_1))**2)-((raio_prim_p1_pol * math.cos(ang_pres_phi_rad)) ** 2)) ** (1/2)) - (math.pi / paso_diam_pd_1) * math.cos(ang_pres_phi_rad)
+raio_curvatura_pinhao_p_p_pol = ((((raio_prim_p1_pol + (1 / paso_diam_pd))**2)-((raio_prim_p1_pol * math.cos(ang_pres_phi_rad)) ** 2)) ** (1/2)) - (math.pi / paso_diam_pd) * math.cos(ang_pres_phi_rad)
 raio_curvatura_engren_p_g_pol = dist_centros_C_pol * math.sin(ang_pres_phi_rad) - raio_curvatura_pinhao_p_p_pol
-fator_geometria_sup_I   = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pinhao_p_p_pol) + (1 / raio_curvatura_engren_p_g_pol)) * diam_prim_dp_p1_pol)
+fator_geometria_sup_I   = math.cos(ang_pres_phi_rad)/(((1 / raio_curvatura_pinhao_p_p_pol) + (1 / raio_curvatura_engren_p_g_pol)) * diam_prim_dp_p_pol)
 
 # ---------------------#
 # Fator de vida KL         - parte superior da sombreada
@@ -282,7 +275,7 @@ faotr_dureza_c_h            = 1
 
 # -----------------------------#
 # Tensao de superficie nos dentes da engrenagem
-tensao_contato_sigma_c              = coef_elastico_c_p_Mpa * ((forca_tang_wt_max * fator_aplicacao_k_a * fator_distribuicao_carga_k_m * fator_tamanho_k_s *fator_acabamento_superficie_c_f / (largura_de_face_F_mm * fator_geometria_sup_I * diam_prim_dp_g1_mm * fator_dinamico_kv_max) ) **0.5)
+tensao_contato_sigma_c              = coef_elastico_c_p_Mpa * ((forca_tang_wt_max * fator_aplicacao_k_a * fator_distribuicao_carga_k_m * fator_tamanho_k_s *fator_acabamento_superficie_c_f / (largura_de_face_F_mm * fator_geometria_sup_I * diam_prim_dp_g_mm * fator_dinamico_kv_max) ) **0.5)
 
 # -----------------------------#
 # Tensão de flexão no dente do engrenagem
@@ -321,15 +314,15 @@ resistencia_fadiga_superficie_Sfc_psi       = Mpa2psi(resistencia_fadiga_superfi
 print("#-------------------------------------------------------#")
 print("#--------------Dimensionamento geometrico---------------#")
 print("#-------------------------------------------------------#")
-print("\nRazao engrenamento mg\n",                  round(razao_engr_mg_1,3) , "")
-print("Passo diametral pd 1\n",                     round(paso_diam_pd_1,3) , "     dentes / pol")
-print("Diametro primitivo da coroa dpg 1\n",        round(diam_prim_dp_g1_mm,3) , "     mm")
+#print("\nRazao engrenamento mg\n",                  round(razao_engr_mg_1,3) , "")
+print("Passo diametral pd 1\n",                     round(paso_diam_pd,3) , "     dentes / pol")
+print("Diametro primitivo da coroa dpg 1\n",        round(diam_prim_dp_g_mm,3) , "     mm")
 print("Adendo  a 1\n",                              round(adendo_a1_mm,3) , "     mm")
 print("Dedendo b 1\n",                              round(dedendo_b1_mm,3) , "     mm")
 print("Folga min na raiz do dente c 1\n",           round(folg_min_c1_mm,3) , "     mm")
-print("Numero dentes pinhao np 1\n",                round(num_dent_n_p1,0) , "     dentes")
-print("Numero dentes coroa ng 1\n",                 round(num_dent_n_g1,0) , "     dentes")
-print("Diametro primitivo pinhao dpp 1\n",          round(diam_prim_dp_p1_mm,3) , "     mm")  
+print("Numero dentes pinhao np 1\n",                round(num_dent_n_p2,0) , "     dentes")
+print("Numero dentes coroa ng 1\n",                 round(num_dent_n_g2,0) , "     dentes")
+print("Diametro primitivo pinhao dpp 1\n",          round(diam_prim_dp_p_mm,3) , "     mm")  
 print("Diametro externo do pinhao dep 1\n",         diam_ext_de_p1_mm, "     mm")
 print("Diametro externo do pinhao deg 1\n",         diam_ext_de_g1_mm, "     mm")
 print("Distancia entre centros C\n",                dist_centros_C_mm, "     mm")
@@ -337,6 +330,7 @@ print("Comprimento da linha de acao Z\n",           round(linha_acao_Z,3), "    
 print("Razao de contato mp [DEVE SER 1 < mp < 2 ] \n",round(razao_contato_mp,3), "")
 print("indice de qualidade Q_v\n",                  indice_qualidade_Qv)
 print("Largura de face F  \n",                      round(largura_de_face_F_mm,3), "     mm")
+print("Velocidade tangencial  \n",                  round(velocidade_tang_v_t_max_ms,3), "     m/s")
 
 
 
@@ -348,7 +342,6 @@ print("Carga tangencial min Wt\n",                                  round(forca_
 print("Carga tangencial max Wt\n",                                  round(forca_tang_wt_max,1) , "     N")
 print("Fator geométrico de resistência a flexão do pinhão Jp\n",    round(fator_geometrico_resist_flex_Jp,3) , "")
 print("Fator geométrico de resistência a flexão do p Jg\n",         round(fator_geometrico_resist_flex_Jg,3) , "")
-#print("Fator dinamico Kv e Cv min \n",                              round(fator_dinamico_kv_min,3) )
 print("Fator dinamico Kv e Cv \n",                                  round(fator_dinamico_kv_max,3) )
 print("Fator aplicacao Ka e Ca \n",                                 fator_aplicacao_k_a)
 print("Fator distribuicao de carga Km e Cm\n",                      fator_distribuicao_carga_k_m)

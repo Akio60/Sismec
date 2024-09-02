@@ -50,14 +50,11 @@ cnd_1_rpm_min      = 500
 cnd_1_rpm_max      = 600
 cnd_1_rads_min     = rpm2rad(cnd_1_rpm_min)
 cnd_1_rads_max     = rpm2rad(cnd_1_rpm_max)
-cnd_2_rpm          = 1000
 ang_pres_phi       = 20
 ang_pres_phi_rad   = angle2rad(ang_pres_phi)
 modulo_mm          = 3
 num_dent_n_g1      = 60
 num_dent_n_p2      = 43 
-lim_res_fadg_Se_Mpa= 700    #dado do slide de teoria de dalha por fadiga
-lim_res_fadg_Sut_Mpa= lim_res_fadg_Se_Mpa / 0.5
 E_Gpa              = 190
 v                  = 0.27
 grau_AGMA          = 1
@@ -151,8 +148,8 @@ velocidade_tang_v_t_max_ms     = ftmin2ms(velocidade_tang_v_t_max_ft_min)
 
 #-------------------------------------------------------#
 #considerando uma proximidade de ambas velocidades tang
-# a partir da tabela _ do slide _ aula _
-indice_qualidade_Qv            = 9
+# a partir da tabela da apresentacao do projeto
+indice_qualidade_Qv            = 8
 
 #-------------------------------------------------------#
 # dado : largura da face pode estar entre 8/pd e 16/pd
@@ -162,11 +159,7 @@ largura_de_face_F_mm           = pol2mm(largura_de_face_F_pol)
 largura_de_face_F_m            = largura_de_face_F_mm / 1000
 
 
-#-------------------------------------------------------#
-#
 #--------------------Analise Dinamica-------------------#
-#
-#-------------------------------------------------------#
 
 #----------------------#
 # Note que o torque e inversamente proporcional a velocidade de rotacao
@@ -318,9 +311,7 @@ resistencia_fadiga_superficie_Sfc_mpa       = resistencia_fadiga_superficie_Sfc_
 resistencia_fadiga_superficie_Sfc_psi       = Mpa2psi(resistencia_fadiga_superficie_Sfc_mpa)
 
 
-print("#-------------------------------------------------------#")
-print("#--------------Dimensionamento geometrico---------------#")
-print("#-------------------------------------------------------#")
+print("#---------Dimensionamento geometrico----------#")
 print("\nRazao engrenamento mg\n",                  round(razao_engr_mg_1,3) , "")
 print("Passo diametral pd 1\n",                     round(paso_diam_pd_1,3) , "     dentes / pol")
 print("Diametro primitivo da coroa dpg 1\n",        round(diam_prim_dp_g1_mm,3) , "     mm")
@@ -337,18 +328,16 @@ print("Comprimento da linha de acao Z\n",           round(linha_acao_Z,3), "    
 print("Razao de contato mp [DEVE SER 1 < mp < 2 ] \n",round(razao_contato_mp,3), "")
 print("indice de qualidade Q_v\n",                  indice_qualidade_Qv)
 print("Largura de face F  \n",                      round(largura_de_face_F_mm,3), "     mm")
+print("Velocidade tangencial  \n",                  round(velocidade_tang_v_t_max_ms,3), "     m/s")
 
 
 
-print("\n#-------------------------------------------------------#")
-print("#--------------------Analise Dinamica-------------------#")
-print("#-------------------------------------------------------#")
+print("#---------------Analise Dinamica--------------#")
 print("\nNúmero de ciclos de projeto N_ciclos\n",                   round( num_ciclos/1_000_000_000,3) ,"     x 10^9 ciclos")
 print("Carga tangencial min Wt\n",                                  round(forca_tang_wt_min,1) , "      N")
 print("Carga tangencial max Wt\n",                                  round(forca_tang_wt_max,1) , "     N")
 print("Fator geométrico de resistência a flexão do pinhão Jp\n",    round(fator_geometrico_resist_flex_Jp,3) , "")
 print("Fator geométrico de resistência a flexão do p Jg\n",         round(fator_geometrico_resist_flex_Jg,3) , "")
-#print("Fator dinamico Kv e Cv min \n",                              round(fator_dinamico_kv_min,3) )
 print("Fator dinamico Kv e Cv \n",                                  round(fator_dinamico_kv_max,3) )
 print("Fator aplicacao Ka e Ca \n",                                 fator_aplicacao_k_a)
 print("Fator distribuicao de carga Km e Cm\n",                      fator_distribuicao_carga_k_m)
@@ -363,17 +352,18 @@ print("Fator de temperatura Kt\n",                                  fator_temper
 print("Fator de confiabilidade\n",                                  fator_confiabilidade_k_r)
 print("Fator de dureza Ch\n",                                       faotr_dureza_c_h)
 print("Coeficiente elastico Cp\n",                                  round(coef_elastico_c_p_Mpa,2), "     [Mpa]^0.5")
-print("\n#-------------------------------------------------------#")
+print("\n#---------------------------------------------#")
 print("Tensão superficial do par sigma_c\n",                        round(tensao_contato_sigma_c,2) , "     Mpa")
+print("\n#---------------------------------------------#")
 print("Tensão de flexão no dente do pinhão I\n",                    round(tensao_flexao_pinhao_sigma_b,2) , "     Mpa")
 print("Tensão de flexão no dente da engrenagem I\n",                round(tensao_flexao_engrenagem_sigma_b,2) , "     Mpa")
-print("\n#-------------------------------------------------------#")
+print("\n#---------------------------------------------#")
 print("Resistência à fadiga de flexão Sfb'\n",                      round(resistencia_fadiga_flexao_Sfb_dot_mpa,2) , "     Mpa" )
 print("Resistência à fadiga de flexão corrigida Sfb\n",             round(resistencia_fadiga_flexao_Sfb_mpa,2) , "     Mpa"  )
 print("Resistência à fadiga de superfície Sfc'\n",                  round(resistencia_fadiga_superficie_Sfc_dot_mpa,2) , "     Mpa" )
 print("Resistência à fadiga de superfície corrigida Sfc\n",         round(resistencia_fadiga_superficie_Sfc_mpa,2) , "     Mpa" )
-print("\n#-------------------------------------------------------#")
+print("\n#---------------------------------------------#")
 print("Coeficiente de segurança de falha por flexao no dente do pinhao Nbp\n"     , round(resistencia_fadiga_flexao_Sfb_mpa / tensao_flexao_pinhao_sigma_b,2)      )
 print("Coeficiente de segurança de falha por flexão no dente da engrenagem Nbg\n" , round(resistencia_fadiga_flexao_Sfb_mpa / tensao_flexao_engrenagem_sigma_b ,2) )
 print("Coeficiente de segurança de falha superficial\n"                           , round(resistencia_fadiga_superficie_Sfc_mpa / tensao_contato_sigma_c,2)        )
-print("\n#-------------------------------------------------------#",    )
+print("\n#---------------------------------------------#",    )
