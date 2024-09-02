@@ -51,7 +51,7 @@ cnd_1_rads_max     = rpm2rad(cnd_1_rpm_max)
 cnd_2_rpm          = 1000
 ang_pres_phi       = 20
 ang_pres_phi_rad   = angle2rad(ang_pres_phi)
-mod_gears_mm       = 3
+modulo_mm          = 3
 num_dent_n_g1      = 60
 num_dent_n_p2      = 43 
 lim_res_fadg_Se_Mpa= 700    #dado do slide de teoria de dalha por fadiga
@@ -77,7 +77,7 @@ num_dent_n_p1     = num_dent_n_g1 / razao_engr_mg_1
 
 # A unidade de saida do passo diametral deve ser em num_dentes/pol
 # a fim de facilitar as especificacoes de engrenagens
-diam_prim_dp_g1_mm  = mod_gears_mm * num_dent_n_g1
+diam_prim_dp_g1_mm  = modulo_mm * num_dent_n_g1
 diam_prim_dp_g1_pol = mm2pol(diam_prim_dp_g1_mm)
 
 diam_prim_dp_p1_pol = diam_prim_dp_g1_pol * razao_vel_m_v1
@@ -262,7 +262,7 @@ fator_confiabilidade_k_r= 0.85
 # Tensão superficial do par
 fator_lewis_x               = 2
 fator_adimensional_Y        = 2 * math.pi  * fator_lewis_x / (3 * paso_circ_pc)
-tensao_contato_sigma_b_mpa  = forca_tang_wt_max / (mod_gears_mm * largura_de_face_F_mm * fator_adimensional_Y)
+tensao_contato_sigma_b_mpa  = forca_tang_wt_max / (modulo_mm * largura_de_face_F_mm * fator_adimensional_Y)
 
 # -----------------------------#
 # Resistência à fadiga de flexão Sfb'
