@@ -6,8 +6,6 @@
 # 
 #-------------------------------------------------------#
 
-
-
 import math
 import os
 
@@ -22,6 +20,8 @@ def psi2Mpa(psi):
     return float(psi) * 0.006894744825494
 def Mpa2psi(Mpa):
     return float(Mpa) * 145.038
+def mm2ft(mm):
+    return mm*0.0032808399
 def mm2pol(mm):
     return float(mm) / 25.4
 def pol2mm(pol):
@@ -36,6 +36,8 @@ def m2ft(m):
     return m * 3.28084
 def N2lb(N):
     return N*0.2248
+def ftmin2ms(ftmin):
+    return ftmin * 0.00508
 
 #-------------------------------------------------------#
 # Dados do projeto
@@ -85,6 +87,7 @@ diam_prim_dp_p1_mm  = pol2mm(diam_prim_dp_p1_pol)
 
 paso_diam_pd_1      = num_dent_n_g1 / diam_prim_dp_g1_pol
 
+diam_prim_dp_g1_m   = diam_prim_dp_g1_mm / 1000
 #-------------------------------------------------------#
 # Dados da tabela do slide 17 do arquivo ENGRENAGENS CILINDRICAS DE DENTES RETOS - Parte 1.pdf
 
@@ -118,6 +121,7 @@ raio_prim_p1_ft   = m2ft(raio_prim_p1_m)
 
 #-------------------------------------------------------#
 raio_prim_g1_mm   = diam_prim_dp_g1_mm / 2
+raio_prim_g1_ft   = mm2ft(raio_prim_g1_mm)
 
 #-------------------------------------------------------#
 dist_centros_C_mm = (raio_prim_p1_mm) + (raio_prim_g1_mm)
@@ -137,18 +141,18 @@ paso_base_pb      = paso_circ_pc * math.cos(ang_pres_phi_rad)
 razao_contato_mp  = linha_acao_Z / paso_base_pb
 
 #-------------------------------------------------------#
-velocidade_tang_v_t_max = 2 * math.pi * cnd_1_rpm_max * raio_prim_p1_ft
-velocidade_tang_v_t_min = 2 * math.pi * cnd_1_rpm_min * raio_prim_p1_ft
-
+velocidade_tang_v_t_max_ft_min = 2 * math.pi * cnd_1_rpm_max * raio_prim_g1_ft
+velocidade_tang_v_t_min_ft_min = 2 * math.pi * cnd_1_rpm_min * raio_prim_g1_ft
+velocidade_tang_v_t_max_ms     = ftmin2ms(velocidade_tang_v_t_max_ft_min)
 #-------------------------------------------------------#
 #considerando uma proximidade de ambas velocidades tang
 # a partir da tabela _ do slide _ aula _
-indice_qualidade_Qv     = 8
+indice_qualidade_Qv     = 9
 
 #-------------------------------------------------------#
 # dado : largura da face pode estar entre 8/pd e 16/pd
 # utilizaremos a media
-largura_de_face_F_pol        = 12 / paso_diam_pd_1
+largura_de_face_F_pol        = 16 / paso_diam_pd_1
 
 #-------------------------------------------------------#
 #--------------------conversao de unidades--------------#
@@ -186,15 +190,16 @@ fator_geometrico_resist_flex_Jg = 0.43
 # ---------------------#
 # Fator Dinamico Kv S.I.(para 6 < Qv < 11)
 B                   = ((12 - indice_qualidade_Qv) ** (2/3)) / 4  
-A                   = 50 + 56 * (1 - B)
-fator_dinamico_kv_min   = (A / ( A + (200 * velocidade_tang_v_t_max) ** 0.5)) ** B
-fator_dinamico_kv_max   = (A / ( A + (200 * velocidade_tang_v_t_max) ** 0.5)) ** B
+A                   = 50 + (56 * (1 - B))
+v_t_max = (A + (indice_qualidade_Qv - 3) ** 2)/200
+fator_dinamico_kv_min   = (A / ( A + ((200 * v_t_max) ** 0.5))) ** B
+fator_dinamico_kv_max   = (A / ( A + ((200 * velocidade_tang_v_t_max_ms) ** 0.5))) ** B
 
 # ---------------------#
 # fator de aplicacao k_a
 # -> choques moderados na maquina movida
 # -> uniforme na maquina motoraa 
-fator_aplicacao_k_a = 1.50
+fator_aplicacao_k_a = 1.25
 
 #---------------------#
 # Fato de distribuicao de carga
@@ -220,7 +225,7 @@ fator_idler_k_i     = 1.0
 
 # Fator de acabamento superficial
 # sem padroes pela AGMA
-fator_acabamento_superficie_c_f = 1.0
+fator_acabamento_superficie_c_f = 1
 
 # Coeficiente elástico
 # dada a tabela 4 no slide 24 na aula 2
@@ -255,14 +260,19 @@ fator_confiabilidade_k_r= 0.85
 
 # ---------------------#
 # Tensão de flexão no dente do engrenagem
+tensao_flexao_engrenagem_sigma_b = forca_tang_wt_max * fator_aplicacao_k_a * fator_distribuicao_carga_k_m * fator_tamanho_k_s * fator_espessura_borda_k_b * fator_idler_k_i / ( largura_de_face_F_mm * fator_geometrico_resist_flex_Jg * fator_dinamico_kv_max)
 
 # ---------------------#
 # Tensão de flexão no dente do pinhao
+tensao_flexao_pinhao_sigma_b     = forca_tang_wt_max * fator_aplicacao_k_a * fator_distribuicao_carga_k_m * fator_tamanho_k_s * fator_espessura_borda_k_b * fator_idler_k_i / ( largura_de_face_F_mm * fator_geometrico_resist_flex_Jp * fator_dinamico_kv_max)
 
 # Tensão superficial do par
 fator_lewis_x               = 2
 fator_adimensional_Y        = 2 * math.pi  * fator_lewis_x / (3 * paso_circ_pc)
 tensao_contato_sigma_b_mpa  = forca_tang_wt_max / (modulo_mm * largura_de_face_F_mm * fator_adimensional_Y)
+
+#tensao de contato de hertz
+tensao_contato_sigma_c      = coef_elastico_c_p_Mpa * ((forca_tang_wt_max * fator_aplicacao_k_a * fator_distribuicao_carga_k_m * fator_tamanho_k_s *fator_acabamento_superficie_c_f / ( largura_de_face_F_mm * fator_geometria_sup_I * diam_prim_dp_g1_mm * fator_dinamico_kv_max) ) ** 2)
 
 # -----------------------------#
 # Resistência à fadiga de flexão Sfb'
@@ -307,9 +317,6 @@ faotr_dureza_c_h            = 1
 # utilizando os fatores de correcao
 resistencia_fadiga_superficie_Sfc_mpa = resistencia_fadiga_superficie_Sfc_dot_mpa * fator_vida_c_L * faotr_dureza_c_h / ( fator_temperatura_c_t * fator_confiabilidade_c_r)
 resistencia_fadiga_superficie_Sfc_psi = Mpa2psi(resistencia_fadiga_superficie_Sfc_mpa)
-
-
-
 
 
 print("#-------------------------------------------------------#")
@@ -357,9 +364,10 @@ print("Fator de vida superficial Cl\n",                             fator_vida_c
 print("Fator de temperatura Kt\n",                                  fator_temperatura_k_t)
 print("Fator de confiabilidade\n",                                  fator_confiabilidade_k_r)
 print("Fator de dureza Ch\n",                                       faotr_dureza_c_h)
-print("Tensão superficial do par sigma_c\n",                        round(tensao_contato_sigma_b_mpa,2) , "Mpa")
-print("# Tensão de flexão no dente do pinhão I\n",                  )
-print("# Tensão de flexão no dente da engrenagem I\n",              )
+print("Tensão superficial do par sigma_b\n",                        round(tensao_contato_sigma_b_mpa,2) , "Mpa")
+print("Tensão superficial do par sigma_c\n",                        round(tensao_contato_sigma_c,2) , "Mpa")
+print("Tensão de flexão no dente do pinhão I\n",                    round(tensao_flexao_pinhao_sigma_b,2) , "Mpa")
+print("Tensão de flexão no dente da engrenagem I\n",                round(tensao_flexao_engrenagem_sigma_b,2) , "Mpa")
 print("Resistência à fadiga de flexão Sfb'\n",                      round(resistencia_fadiga_flexao_Sfb_dot_mpa,2) , "Mpa" )
 print("Resistência à fadiga de flexão corrigida Sfb\n",             round(resistencia_fadiga_flexao_Sfb_mpa,2) , "Mpa"  )
 print("Resistência à fadiga de superfície Sfc'\n",                  round(resistencia_fadiga_superficie_Sfc_dot_mpa,2) , "Mpa" )
@@ -368,6 +376,3 @@ print("# Coeficiente de segurança de falha por flexao no dente do pinhao Nbp\n"
 print("# Coeficiente de segurança de falha por flexão no dente da engrenagem Nbg\n")
 print("# Coeficiente de segurança de falha superficial\n",         )
 print("\n#-------------------------------------------------------#",    )
-
-print(num_dent_n_p1/num_dent_n_g1)
-
