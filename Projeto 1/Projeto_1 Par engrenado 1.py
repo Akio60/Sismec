@@ -44,10 +44,15 @@ def ftmin2ms(ftmin):
 
 material           = 'aco'
 pot_Hp             = 5
-cnd_1_rpm_min      = 500
-cnd_1_rpm_max      = 600
-cnd_1_rads_min     = rpm2rad(cnd_1_rpm_min)
-cnd_1_rads_max     = rpm2rad(cnd_1_rpm_max)
+razao_vel_m_v1     = 0.8
+cnd_1_rpm_min_movido      = 500
+cnd_1_rpm_max_movido      = 600
+cnd_1_rpm_min_motor       = cnd_1_rpm_min_movido / razao_vel_m_v1
+cnd_1_rpm_max_motor       = cnd_1_rpm_max_movido / razao_vel_m_v1
+cnd_1_rads_min_movido     = rpm2rad(cnd_1_rpm_min_movido)
+cnd_1_rads_max_movido     = rpm2rad(cnd_1_rpm_max_movido)
+cnd_1_rads_min_motor      = rpm2rad(cnd_1_rpm_min_motor) 
+cnd_1_rads_max_motor      = rpm2rad(cnd_1_rpm_max_motor) 
 ang_pres_phi       = 20
 ang_pres_phi_rad   = angle2rad(ang_pres_phi)
 modulo_mm          = 3
@@ -60,7 +65,6 @@ dureza_final_HB    = 350
 temp_vida_anos     = 5
 temp_operacao_C    = 121
 confiabilidade     = 90     # %
-razao_vel_m_v1     = 0.8
 
 #
 #---------------desenvovilmento geometrico--------------#
@@ -106,8 +110,8 @@ folg_min_c1_mm       = pol2mm(folg_min_c1_pol)
 larg_min_topo_1_mm   = pol2mm(larg_min_topo_1_pol)
 
 #Par engrenado 1--------------------------#
-diam_ext_de_p1_mm = diam_prim_dp_p1_mm + 2 * dedendo_b1_mm
-diam_ext_de_g1_mm = diam_prim_dp_g1_mm + 2 * dedendo_b1_mm
+diam_ext_de_p1_mm = diam_prim_dp_p1_mm + 2 * adendo_a1_mm
+diam_ext_de_g1_mm = diam_prim_dp_g1_mm + 2 * adendo_a1_mm
 
 #Par engrenado 1--------------------------#
 raio_prim_p1_mm   = diam_prim_dp_p1_mm / 2
@@ -138,8 +142,8 @@ paso_base_pb      = paso_circ_pc * math.cos(ang_pres_phi_rad)
 razao_contato_mp  = linha_acao_Z / paso_base_pb
 
 #Par engrenado 1--------------------------#
-velocidade_tang_v_t_max_ft_min = 2 * math.pi * cnd_1_rpm_max * raio_prim_g1_ft
-velocidade_tang_v_t_min_ft_min = 2 * math.pi * cnd_1_rpm_min * raio_prim_g1_ft
+velocidade_tang_v_t_max_ft_min = 2 * math.pi * cnd_1_rpm_max_motor * raio_prim_p1_ft
+velocidade_tang_v_t_min_ft_min = 2 * math.pi * cnd_1_rpm_min_motor * raio_prim_p1_ft
 velocidade_tang_v_t_max_ms     = ftmin2ms(velocidade_tang_v_t_max_ft_min)
 
 #Par engrenado 1--------------------------#
@@ -159,8 +163,8 @@ largura_de_face_F_m            = largura_de_face_F_mm / 1000
 #Par engrenado 1--------------------------#
 # Note que o torque e inversamente proporcional a velocidade de rotacao
 pot_W             = hp2W(pot_Hp)
-torque_t_max      = pot_W / cnd_1_rads_min
-torque_t_min      = pot_W / cnd_1_rads_max
+torque_t_max      = pot_W / cnd_1_rads_min_motor
+torque_t_min      = pot_W / cnd_1_rads_max_motor
 forca_tang_wt_min = torque_t_min / raio_prim_p1_m
 forca_tang_wt_max = torque_t_max / raio_prim_p1_m
 forca_tang_wt_max_lb        = N2lb (forca_tang_wt_max)
@@ -171,7 +175,7 @@ forca_res_w_max   = forca_tang_wt_max / math.cos(ang_pres_phi_rad)
 
 #Par engrenado 1--------------------------#
 # Número de ciclos de projeto
-num_ciclos        = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max
+num_ciclos        = temp_vida_anos * 365 * 24 * 60 * cnd_1_rpm_max_movido
 
 #Par engrenado 1--------------------------#
 # fator geometrico de resis flex pinhao / eng
