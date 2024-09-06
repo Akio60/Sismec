@@ -90,6 +90,9 @@ razao_contato_mp            = linha_acao_Z / paso_base_pb
 print("o novo angulo de pressao obtido foi :    "   ,   round(rad2angle(novo_phi),2)    , "mm")
 print("o raio primitivo engrenagem obtido foi : "   ,   round(raio_prim_rp_g_mm,1)      , "mm")
 print("o raio primitivo pinhao obtido foi :     "   ,   round(raio_prim_rp_p_mm_novo,1) , "mm")
+print("o raio base engrenagem obtido foi : "        ,   round(novo_raio_base_engrenagem_1,1)      , "mm")
+print("o raio base pinhao obtido foi :     "        ,   round(novo_raio_base_pinhao_1,1) , "mm")
+
 print("a nova razao de contato obtida foi :     "   ,   round(razao_contato_mp,3))
 
 
