@@ -24,7 +24,7 @@ def fs( fp1, fp2 ):
 # polia montada por interferencia
 # ou seja, possui coeficiente de tensao unitario
 
-# caracteristicas do material do eixo
+# dados do material do eixo
 # aco SAE 1045
 ACO_Sut_Mpa         =   627 
 ACO_Sy__Mpa         =   531
@@ -45,3 +45,12 @@ L_d2_mm =   18
 L_d3_mm =   14
 L_d4_mm =   35
 L_d5_mm =   20
+
+# dados do projeto
+coeficiente_seguranca               = 3
+# para iniciar as iteracaoes, utilizar D/dcrit e entao
+# para cara iteracao estimando o diametro d, é possivel obter a nova
+# relacao D/d
+relacao_escalonamento_fixa_D_dcrit  = 1.2
+# calcular o concentradores de tensao relativo apos a segunda iteracao
+# arredondar os valores de sai#ra para numeros inteiros em mm
