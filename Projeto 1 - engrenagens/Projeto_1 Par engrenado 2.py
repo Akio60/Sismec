@@ -30,7 +30,7 @@ def pol2mm(pol):
 def angle2rad(angle):
     return angle * math.pi / 180
 def hp2W(hp):
-    return hp * 754.7
+    return hp * 745.7
 def rpm2rad(RPM):
     return RPM * 2 * math.pi /60
 def m2ft(m):
