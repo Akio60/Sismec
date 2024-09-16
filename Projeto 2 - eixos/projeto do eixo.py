@@ -228,7 +228,10 @@ constante_neuber_torcao_as  = 0.055
 sensibilidade_do_material_flexao    = 1 / (1 + (constante_neuber_flexao_a  / (raio_de_entalhe_in ** 0.5)))
 sensibilidade_do_material_torcao    = 1 / (1 + (constante_neuber_torcao_as / (raio_de_entalhe_in ** 0.5)))
 # a sensibilidade é adimensional
-
+k_f_provisorio    = 1
+k_fsm_provisorio  = 1
+d = (((32 * coeficiente_seguranca / math.pi()) * 
+    ( ((k_f_provisorio * torque_cnd1_alternado_Nm / limite_res_fadiga_S_e_Mpa) ** 2) + (0.75 * ((torque_cnd1_medio_Nm / ACO_Sy__Mpa)**2))) ** 0.5 )   ) ** 0.3333
 
 
 
