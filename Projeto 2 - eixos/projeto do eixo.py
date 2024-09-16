@@ -53,6 +53,12 @@ raio_de_entalhe_mm      = 0.25
 raio_de_concordancia_mm = 0.25
 raio_de_escalonamento_mm= 0.25
 
+raio_de_entalhe_in      =mm2pol(raio_de_entalhe_mm      )
+raio_de_concordancia_in =mm2pol(raio_de_concordancia_mm )
+raio_de_escalonamento_in=mm2pol(raio_de_escalonamento_mm)
+
+
+
 def fn( fp1, fp2 ):
     return fp1 - fp2
 def fs( fp1, fp2 ):
@@ -179,32 +185,57 @@ R1y_rad_cnd1_alternado = R1(forca_radial_engrenagem_cnd1_alternado_Fgyradial, fo
 R2z_tan_cnd1_alternado = R2(forca_tangencial_engrenagem_cnd1_alternado_Fgztan, distancia_coroa_1_m, forca_flete_eixo_cnd1_alternado_Fs, distancia_polia_m, distancia_mancal2_m)
 R1z_tan_cnd1_alternado = R1(forca_tangencial_engrenagem_cnd1_alternado_Fgztan, forca_flete_eixo_cnd1_alternado_Fs, R2z_tan_cnd1_alternado)
 
-#------------------------------------------------#
-# etapa 5
-# Sensibilidade ao entalhe (tração)
 
 
 #------------------------------------------------#
 # etapa 5
-# Sensibilidade ao entalhe (tração)
+# Coeficiente de correcao 
+# confiabilidade para 90%
+C_conf  = 0.897
 
+# temperatura < 450
+C_temp  = 1
+
+# considerando d < 8 mm , caso contrario reavaliar
+c_tam   = 1
+
+# Flexao = 1 , Carga axial = 0.7
+c_carr  = 1
 #------------------------------------------------#
 # etapa 6
-# Coeficiente de correcao de confiabilidade
-
-#------------------------------------------------#
-# etapa 7
 # Coeficiente de correcao de superficie
+# Equacao para eixo usinado
+c_sup   = 4.51 * (ACO_Sut_Mpa ** (-0.265))
 
 #------------------------------------------------#
 # etapa 8
 # Resistencia a fadiga corrigida
+# Limite de resistencia a fadiga Se' em vida infinita
+# para aco < 200 ksi
+limite_res_fadiga_S_e_dot_Mpa = 0.5 * ACO_Sut_Mpa
+limite_res_fadiga_S_e_Mpa     = C_conf * C_temp * c_tam * c_carr * c_sup * limite_res_fadiga_S_e_dot_Mpa
 
+#------------------------------------------------#
+# etapa 9
+# Sensibilidade ao entalhe (flexao)
+# analise para 90.93 ksi
+constante_neuber_flexao_a   = 0.070
+
+# Sensibilidade ao entalhe (torcao)
+# analise para 110.93 ksi
+constante_neuber_torcao_as  = 0.055
+
+sensibilidade_do_material_flexao    = 1 / (1 + (constante_neuber_flexao_a  / (raio_de_entalhe_in ** 0.5)))
+sensibilidade_do_material_torcao    = 1 / (1 + (constante_neuber_torcao_as / (raio_de_entalhe_in ** 0.5)))
+# a sensibilidade é adimensional
 
 
 
 
 os.system('cls')
+
+print(Mpa2ksi(ACO_Sut_Mpa))
+
 print()
 print("Torque medio:     \nMmed:" , round(torque_cnd1_medio_Nm,2),     " Nm")
 print("Torque alternado: \nMalt:" , round(torque_cnd1_alternado_Nm,2), " Nm")
