@@ -206,7 +206,7 @@ R1z_tan_cnd1_alternado = R1(forca_tangencial_engrenagem_cnd1_alternado_Fgztan, f
 
 os.system('cls')
 print()
-print("Torque medio:     \nMmed:"     , round(torque_cnd1_medio_Nm,2), " Nm")
+print("Torque medio:     \nMmed:" , round(torque_cnd1_medio_Nm,2),     " Nm")
 print("Torque alternado: \nMalt:" , round(torque_cnd1_alternado_Nm,2), " Nm")
 
 print("Forca da engrenagem em y (media):                       \nFgy:  " , round(forca_radial_engrenagem_cnd1_medio_Fgyradial     ,2),"  N")
@@ -215,21 +215,21 @@ print("Forca da engrenagem em y (alternada):                   \nFgy:  " , round
 print("Forca da engrenagem em z (media):                       \nFgz:  " , round(forca_tangencial_engrenagem_cnd1_medio_Fgztan    ,2),"  N")
 print("Forca da engrenagem em z (alternada):                   \nFgz:  " , round(forca_tangencial_engrenagem_cnd1_alternado_Fgztan,2),"  N")
 
-print("Forca da polia associada ao Torque (media):             \nFn:  " , round(forca_associada_torque_cnd1_medio_fn_N     ,2),"  N")
-print("Forca da polia associada ao Torque (alternada):         \nFn:  " , round(forca_associada_torque_cnd1_alternado_fn_N ,2),"  N")
+print("Forca da polia associada ao Torque (media):             \nFn:  " , round(forca_associada_torque_cnd1_medio_fn_N     ,2),       "  N")
+print("Forca da polia associada ao Torque (alternada):         \nFn:  " , round(forca_associada_torque_cnd1_alternado_fn_N ,2),       "  N")
 
-print("Forca da polia associada ao Momento fletor (media):     \nFs :  " , round(forca_flete_eixo_cnd1_medio_Fs     ,2),"  N")
-print("Forca da polia associada ao Momento fletor (alternada): \nFs :  " , round(forca_flete_eixo_cnd1_alternado_Fs ,2),"  N")
+print("Forca da polia associada ao Momento fletor (media):     \nFs :  " , round(forca_flete_eixo_cnd1_medio_Fs     ,2),              "  N")
+print("Forca da polia associada ao Momento fletor (alternada): \nFs :  " , round(forca_flete_eixo_cnd1_alternado_Fs ,2),              "  N")
 
 print("Componentes de reação no mancal 1")
-print("R1y (media): \n", round(R1y_rad_cnd1_medio,2),"  N")
-print("R1z (media): \n", round(R1z_tan_cnd1_medio,2),"  N")
+print("R1y (media): \n",     round(R1y_rad_cnd1_medio,2),    "  N")
+print("R1z (media): \n",     round(R1z_tan_cnd1_medio,2),    "  N")
 print("R1y (alternada): \n", round(R1y_rad_cnd1_alternado,2),"  N")
 print("R1z (alternada): \n", round(R1z_tan_cnd1_alternado,2),"  N")
 
 print("Componentes de reação no mancal 2")
-print("R2y (media): \n", round(R2y_rad_cnd1_medio,2),"  N")
-print("R2z (media): \n", round(R2z_tan_cnd1_medio,2),"  N")
+print("R2y (media): \n",     round(R2y_rad_cnd1_medio,2),    "  N")
+print("R2z (media): \n",     round(R2z_tan_cnd1_medio,2),    "  N")
 print("R2y (alternada): \n", round(R2y_rad_cnd1_alternado,2),"  N")
 print("R2z (alternada): \n", round(R2z_tan_cnd1_alternado,2),"  N")
 print()
