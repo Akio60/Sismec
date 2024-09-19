@@ -225,13 +225,17 @@ constante_neuber_flexao_a   = 0.070
 # analise para 110.93 ksi
 constante_neuber_torcao_as  = 0.055
 
-sensibilidade_do_material_flexao    = 1 / (1 + (constante_neuber_flexao_a  / (raio_de_entalhe_in ** 0.5)))
-sensibilidade_do_material_torcao    = 1 / (1 + (constante_neuber_torcao_as / (raio_de_entalhe_in ** 0.5)))
+sensibilidade_do_material_flexao_q  = 1 / (1 + (constante_neuber_flexao_a  / (raio_de_entalhe_in ** 0.5)))
+sensibilidade_do_material_torcao_qs = 1 / (1 + (constante_neuber_torcao_as / (raio_de_entalhe_in ** 0.5)))
 # a sensibilidade é adimensional
-k_f_provisorio    = 1
-k_fsm_provisorio  = 1
-d = (((32 * coeficiente_seguranca / math.pi()) * 
-    ( ((k_f_provisorio * torque_cnd1_alternado_Nm / limite_res_fadiga_S_e_Mpa) ** 2) + (0.75 * ((torque_cnd1_medio_Nm / ACO_Sy__Mpa)**2))) ** 0.5 )   ) ** 0.3333
+
+k_t_suposto       = 3.5
+k_ts_suposto      = 2.0
+
+k_f_provisorio    = 1 + sensibilidade_do_material_flexao_q  * (k_t_suposto  - 1)
+k_fsm_provisorio  = 1 + sensibilidade_do_material_torcao_qs * (k_ts_suposto - 1)
+
+d = (((32 * coeficiente_seguranca / math.pi) * ( ((k_f_provisorio * torque_cnd1_alternado_Nm / limite_res_fadiga_S_e_Mpa) ** 2) + (0.75 * ((torque_cnd1_medio_Nm / ACO_Sy__Mpa)**2))) ** 0.5 )   ) ** 0.3333
 
 
 
@@ -266,4 +270,5 @@ print("R2y (media): \n",     round(R2y_rad_cnd1_medio,2),    "  N")
 print("R2z (media): \n",     round(R2z_tan_cnd1_medio,2),    "  N")
 print("R2y (alternada): \n", round(R2y_rad_cnd1_alternado,2),"  N")
 print("R2z (alternada): \n", round(R2z_tan_cnd1_alternado,2),"  N")
+
 print()
