@@ -69,8 +69,8 @@ def fs( fp1, fp2 ):
 
 # dados do material do eixo
 # aco SAE 1045
-ACO_Sut_Mpa         =   627 
-ACO_Sy__Mpa         =   531
+ACO_Sut_Mpa         =   627.0
+ACO_Sy__Mpa         =   531.0
 confiabilidade      =   90
 eixo                =   "usinado"
 temp_operacao_max_C =   400
@@ -100,7 +100,7 @@ relacao_escalonamento_fixa_D_dcrit  = 1.2
 
 # ------------------------------------------- #
 def momento_inercia_eixo_solido(diametro):
-    return math.pi * (diametro ** 4) / 64 
+    return math.pi * (diametro ** 4) / 64
 
 def tensao_flexao_alternada(fator_concentracao_tensao_fadiga_fletor_alternada_Kf,
                             momento_alternado_Ma,
@@ -130,12 +130,12 @@ torque_cnd2_Nm          = potencia_motor_W   / (2 * math.pi * velocidade_cnd2_rp
 #   etapa 2
 # notar a direcao das forcas para abitrariamente decidir o sinal da euqacao
 
-forca_associada_torque_cnd1_medio_fn_N      = torque_cnd1_medio_Nm    /   raio_coroa_1_m
-forca_associada_torque_cnd1_alternado_fn_N  = torque_cnd1_alternado_Nm/   raio_coroa_1_m
+forca_associada_torque_cnd1_fn_medio_N      = torque_cnd1_medio_Nm    /   raio_coroa_1_m
+forca_associada_torque_cnd1_fn_alternado_N  = torque_cnd1_alternado_Nm/   raio_coroa_1_m
 forca_associada_torque_cnd2_fn_N            = torque_cnd2_Nm          /   raio_coroa_2_m
 
-forca_flete_eixo_cnd1_medio_Fs              = 1.5 * forca_associada_torque_cnd1_medio_fn_N
-forca_flete_eixo_cnd1_alternado_Fs          = 1.5 * forca_associada_torque_cnd1_alternado_fn_N
+forca_flete_eixo_cnd1_Fs_medio              = 1.5 * forca_associada_torque_cnd1_fn_medio_N
+forca_flete_eixo_cnd1_Fs_alternado          = 1.5 * forca_associada_torque_cnd1_fn_alternado_N
 forca_flete_eixo_cnd2_Fs                    = 1.5 * forca_associada_torque_cnd2_fn_N
 
 #------------------------------------------------#
@@ -165,7 +165,7 @@ distancia_mancal2_mm = L_d1_mm + L_2_mm + L_3_mm + L_4_mm + L_d4_mm
 distancia_coroa_1_m  = distancia_coroa_1_mm / 1000
 distancia_coroa_2_m  = distancia_coroa_2_mm / 1000
 distancia_polia_m    = distancia_polia_mm   / 1000
-distancia_mancal2_m  = distancia_mancal2_mm  / 1000
+distancia_mancal2_m  = distancia_mancal2_mm / 1000
 
 #--------------------------
 
@@ -174,22 +174,75 @@ def R2(fg, dist_coroa, fs, dist_polia, dist_mancal):
 def R1(fg, fs, R2):
     return -fg - fs - R2
 
-R2y_rad_cnd1_medio     = R2(forca_radial_engrenagem_cnd1_medio_Fgyradial    , distancia_coroa_1_m, forca_flete_eixo_cnd1_medio_Fs, distancia_polia_m, distancia_mancal2_m)
-R1y_rad_cnd1_medio     = R1(forca_radial_engrenagem_cnd1_medio_Fgyradial    , forca_flete_eixo_cnd1_medio_Fs, R2y_rad_cnd1_medio)
-R2z_tan_cnd1_medio     = R2(forca_tangencial_engrenagem_cnd1_medio_Fgztan, distancia_coroa_1_m, forca_flete_eixo_cnd1_medio_Fs, distancia_polia_m, distancia_mancal2_m)
-R1z_tan_cnd1_medio     = R1(forca_tangencial_engrenagem_cnd1_medio_Fgztan, forca_flete_eixo_cnd1_medio_Fs, R2z_tan_cnd1_medio)
+R2y_cnd1_medio     = R2(forca_radial_engrenagem_cnd1_medio_Fgyradial    , distancia_coroa_1_m, forca_flete_eixo_cnd1_Fs_medio, distancia_polia_m, distancia_mancal2_m)
+R1y_cnd1_medio     = R1(forca_radial_engrenagem_cnd1_medio_Fgyradial    , forca_flete_eixo_cnd1_Fs_medio, R2y_cnd1_medio)
+R2z_cnd1_medio     = R2(forca_tangencial_engrenagem_cnd1_medio_Fgztan   , distancia_coroa_1_m, 0, distancia_polia_m, distancia_mancal2_m)
+R1z_cnd1_medio     = R1(forca_tangencial_engrenagem_cnd1_medio_Fgztan   , 0, R2z_cnd1_medio)
 
 
-R2y_rad_cnd1_alternado = R2(forca_radial_engrenagem_cnd1_alternado_Fgyradial, distancia_coroa_1_m, forca_flete_eixo_cnd1_alternado_Fs, distancia_polia_m, distancia_mancal2_m)
-R1y_rad_cnd1_alternado = R1(forca_radial_engrenagem_cnd1_alternado_Fgyradial, forca_flete_eixo_cnd1_alternado_Fs, R2y_rad_cnd1_alternado)
-R2z_tan_cnd1_alternado = R2(forca_tangencial_engrenagem_cnd1_alternado_Fgztan, distancia_coroa_1_m, forca_flete_eixo_cnd1_alternado_Fs, distancia_polia_m, distancia_mancal2_m)
-R1z_tan_cnd1_alternado = R1(forca_tangencial_engrenagem_cnd1_alternado_Fgztan, forca_flete_eixo_cnd1_alternado_Fs, R2z_tan_cnd1_alternado)
+R2y_cnd1_alternado = R2(forca_radial_engrenagem_cnd1_alternado_Fgyradial, distancia_coroa_1_m, forca_flete_eixo_cnd1_Fs_alternado, distancia_polia_m, distancia_mancal2_m)
+R1y_cnd1_alternado = R1(forca_radial_engrenagem_cnd1_alternado_Fgyradial, forca_flete_eixo_cnd1_Fs_alternado, R2y_cnd1_alternado)
+R2z_cnd1_alternado = R2(forca_tangencial_engrenagem_cnd1_alternado_Fgztan, distancia_coroa_1_m, 0, distancia_polia_m, distancia_mancal2_m)
+R1z_cnd1_alternado = R1(forca_tangencial_engrenagem_cnd1_alternado_Fgztan, 0, R2z_cnd1_alternado)
 
+def norm(valor1, valor2):
+  return math.sqrt(valor1**2+valor2**2)
+
+
+
+# CALCULO DOS MOMENTOS MEDIOS NORMALIZADOS EM CADA PONTO
+# SEÇÃO 1
+
+momento_norm_A_cnd1 = 0
+
+soma_my_B_cnd1 = R1y_cnd1_medio*(L_d1_mm/1000)
+soma_mz_B_cnd1 = R1z_cnd1_medio*(L_d1_mm/1000)
+momento_norm_B_cnd1 = norm(soma_my_B_cnd1, soma_mz_B_cnd1)
+
+# SEÇÃO 2
+
+soma_my_C_cnd1 = R1y_cnd1_medio*((L_2_mm-L_d2_mm+L_d1_mm)/1000)
+soma_mz_C_cnd1 = R1z_cnd1_medio*((L_2_mm-L_d2_mm+L_d1_mm)/1000)
+momento_norm_C_cnd1 = norm(soma_my_C_cnd1, soma_mz_C_cnd1)
+
+soma_my_D_cnd1 = R1y_cnd1_medio*((L_2_mm+L_d1_mm)/1000)+forca_radial_engrenagem_cnd1_medio_Fgyradial*(L_d2_mm/1000)
+soma_mz_D_cnd1 = R1z_cnd1_medio*((L_2_mm+L_d1_mm)/1000)+forca_tangencial_engrenagem_cnd1_medio_Fgztan*(L_d2_mm/1000)
+momento_norm_D_cnd1 = norm(soma_my_D_cnd1, soma_mz_D_cnd1)
+
+# SEÇÃO 3
+
+soma_my_E_cnd1 = R1y_cnd1_medio*((L_2_mm+L_3_mm/2+L_d1_mm)/1000)+forca_radial_engrenagem_cnd1_medio_Fgyradial*((L_3_mm/2+L_d2_mm)/1000)
+soma_mz_E_cnd1 = R1z_cnd1_medio*((L_2_mm+L_3_mm/2+L_d1_mm)/1000)+forca_tangencial_engrenagem_cnd1_medio_Fgztan*((L_3_mm/2+L_d2_mm)/1000)
+momento_norm_E_cnd1 = norm(soma_my_E_cnd1, soma_mz_E_cnd1)
+
+# SEÇÃO 4
+
+soma_my_F_cnd1 = R1y_cnd1_medio*((L_2_mm+L_3_mm+L_d1_mm)/1000)+forca_radial_engrenagem_cnd1_medio_Fgyradial*((L_3_mm+L_d2_mm)/1000)
+soma_mz_F_cnd1 = R1z_cnd1_medio*((L_2_mm+L_3_mm+L_d1_mm)/1000)+forca_tangencial_engrenagem_cnd1_medio_Fgztan*((L_3_mm+L_d2_mm)/1000)
+momento_norm_F_cnd1 = norm(soma_my_F_cnd1, soma_mz_F_cnd1)
+
+soma_my_G_cnd1 = R1y_cnd1_medio*((L_2_mm+L_3_mm+L_d3_mm+L_d1_mm)/1000)+forca_radial_engrenagem_cnd1_medio_Fgyradial*((L_3_mm+L_d3_mm+L_d2_mm)/1000)
+soma_mz_G_cnd1 = R1z_cnd1_medio*((L_2_mm+L_3_mm+L_d3_mm+L_d1_mm)/1000)+forca_tangencial_engrenagem_cnd1_medio_Fgztan*((L_3_mm+L_d3_mm+L_d2_mm)/1000)
+momento_norm_G_cnd1 = norm(soma_my_G_cnd1, soma_mz_G_cnd1)
+
+# SEÇÃO 5
+
+soma_my_H_cnd1 = R1y_cnd1_medio*((L_2_mm+L_3_mm+L_4_mm+L_d1_mm)/1000)+forca_radial_engrenagem_cnd1_medio_Fgyradial*((L_3_mm+L_4_mm+L_d2_mm)/1000)
+soma_mz_H_cnd1 = R1z_cnd1_medio*((L_2_mm+L_3_mm+L_4_mm+L_d1_mm)/1000)+forca_tangencial_engrenagem_cnd1_medio_Fgztan*((L_3_mm+L_4_mm+L_d2_mm)/1000)
+momento_norm_H_cnd1 = norm(soma_my_H_cnd1, soma_mz_H_cnd1)
+
+soma_my_I_cnd1 = R1y_cnd1_medio*((L_d1_mm+L_2_mm+L_3_mm+L_4_mm+L_d4_mm)/1000)+forca_radial_engrenagem_cnd1_medio_Fgyradial*((L_3_mm+L_4_mm+L_d2_mm+L_d4_mm)/1000)
+soma_mz_I_cnd1 = R1z_cnd1_medio*((L_d1_mm+L_2_mm+L_3_mm+L_4_mm+L_d4_mm)/1000)+forca_tangencial_engrenagem_cnd1_medio_Fgztan*((L_3_mm+L_4_mm+L_d2_mm+L_d4_mm)/1000)
+momento_norm_I_cnd1 = norm(soma_my_I_cnd1, soma_mz_I_cnd1)
+
+soma_my_J_cnd1 = R1y_cnd1_medio*((L_d1_mm+L_2_mm+L_3_mm+L_4_mm+L_5_mm-L_d5_mm)/1000)+forca_radial_engrenagem_cnd1_medio_Fgyradial*((L_d2_mm+L_3_mm+L_4_mm+L_5_mm-L_d5_mm)/1000) + R2y_cnd1_medio*((L_5_mm-L_d5_mm)/1000)
+soma_mz_J_cnd1 = R1z_cnd1_medio*((L_d1_mm+L_2_mm+L_3_mm+L_4_mm+L_5_mm-L_d5_mm)/1000)+forca_tangencial_engrenagem_cnd1_medio_Fgztan*((L_d2_mm+L_3_mm+L_4_mm+L_5_mm-L_d5_mm)/1000) + R2z_cnd1_medio*((L_5_mm-L_d5_mm)/1000)
+momento_norm_J_cnd1 = norm(soma_my_J_cnd1, soma_mz_J_cnd1)
 
 
 #------------------------------------------------#
 # etapa 5
-# Coeficiente de correcao 
+# Coeficiente de correcao
 # confiabilidade para 90%
 C_conf  = 0.897
 
@@ -242,33 +295,58 @@ d = (((32 * coeficiente_seguranca / math.pi) * ( ((k_f_provisorio * torque_cnd1_
 os.system('cls')
 
 print(Mpa2ksi(ACO_Sut_Mpa))
+print(round(d     ,2))
 
 print()
 print("Torque medio:     \nMmed:" , round(torque_cnd1_medio_Nm,2),     " Nm")
 print("Torque alternado: \nMalt:" , round(torque_cnd1_alternado_Nm,2), " Nm")
 
-print("Forca da engrenagem em y (media):                       \nFgy:  " , round(forca_radial_engrenagem_cnd1_medio_Fgyradial     ,2),"  N")
-print("Forca da engrenagem em y (alternada):                   \nFgy:  " , round(forca_radial_engrenagem_cnd1_alternado_Fgyradial ,2),"  N")
+print("Forca da engrenagem em y (media):                       \nFgy med:  " , round(forca_radial_engrenagem_cnd1_medio_Fgyradial     ,2),"  N")
+print("Forca da engrenagem em y (alternada):                   \nFgy alt:  " , round(forca_radial_engrenagem_cnd1_alternado_Fgyradial ,2),"  N")
 
-print("Forca da engrenagem em z (media):                       \nFgz:  " , round(forca_tangencial_engrenagem_cnd1_medio_Fgztan    ,2),"  N")
-print("Forca da engrenagem em z (alternada):                   \nFgz:  " , round(forca_tangencial_engrenagem_cnd1_alternado_Fgztan,2),"  N")
+print("Forca da engrenagem em z (media):                       \nFgz med:  " , round(forca_tangencial_engrenagem_cnd1_medio_Fgztan    ,2),"  N")
+print("Forca da engrenagem em z (alternada):                   \nFgz alt:  " , round(forca_tangencial_engrenagem_cnd1_alternado_Fgztan,2),"  N")
 
-print("Forca da polia associada ao Torque (media):             \nFn:  " , round(forca_associada_torque_cnd1_medio_fn_N     ,2),       "  N")
-print("Forca da polia associada ao Torque (alternada):         \nFn:  " , round(forca_associada_torque_cnd1_alternado_fn_N ,2),       "  N")
+print("Forca da polia associada ao Torque (media):             \nFn med:  " , round(forca_associada_torque_cnd1_fn_medio_N     ,2),       "  N")
+print("Forca da polia associada ao Torque (alternada):         \nFn alt:  " , round(forca_associada_torque_cnd1_fn_alternado_N ,2),       "  N")
 
-print("Forca da polia associada ao Momento fletor (media):     \nFs :  " , round(forca_flete_eixo_cnd1_medio_Fs     ,2),              "  N")
-print("Forca da polia associada ao Momento fletor (alternada): \nFs :  " , round(forca_flete_eixo_cnd1_alternado_Fs ,2),              "  N")
-
-print("Componentes de reação no mancal 1")
-print("R1y (media): \n",     round(R1y_rad_cnd1_medio,2),    "  N")
-print("R1z (media): \n",     round(R1z_tan_cnd1_medio,2),    "  N")
-print("R1y (alternada): \n", round(R1y_rad_cnd1_alternado,2),"  N")
-print("R1z (alternada): \n", round(R1z_tan_cnd1_alternado,2),"  N")
-
-print("Componentes de reação no mancal 2")
-print("R2y (media): \n",     round(R2y_rad_cnd1_medio,2),    "  N")
-print("R2z (media): \n",     round(R2z_tan_cnd1_medio,2),    "  N")
-print("R2y (alternada): \n", round(R2y_rad_cnd1_alternado,2),"  N")
-print("R2z (alternada): \n", round(R2z_tan_cnd1_alternado,2),"  N")
+print("Forca da polia associada ao Momento fletor (media):     \nFs med:  " , round(forca_flete_eixo_cnd1_Fs_medio     ,2),              "  N")
+print("Forca da polia associada ao Momento fletor (alternada): \nFs alt:  " , round(forca_flete_eixo_cnd1_Fs_alternado ,2),              "  N")
 
 print()
+print("R1y (media): \n",     round(R1y_cnd1_medio,2),    "  N")
+print("R1z (media): \n",     round(R1z_cnd1_medio,2),    "  N")
+print("R2y (media): \n",     round(R2y_cnd1_medio,2),    "  N")
+print("R2z (media): \n",     round(R2z_cnd1_medio,2),    "  N")
+
+print()
+print("R1y (alternada): \n", round(R1y_cnd1_alternado,2),"  N")
+print("R1z (alternada): \n", round(R1z_cnd1_alternado,2),"  N")
+print("R2y (alternada): \n", round(R2y_cnd1_alternado,2),"  N")
+print("R2z (alternada): \n", round(R2z_cnd1_alternado,2),"  N")
+print()
+
+print("SEÇÃO 1")
+print("momento nomalizado no ponto A: \n", round(momento_norm_A_cnd1, 2),"  Nm")
+print("momento nomalizado no ponto B: \n", round(momento_norm_B_cnd1, 2),"  Nm")
+
+print("SEÇÃO 2")
+print("momento nomalizado no ponto C: \n", round(momento_norm_C_cnd1, 2),"  Nm")
+print("momento nomalizado no ponto D: \n", round(momento_norm_D_cnd1, 2),"  Nm")
+
+print("SEÇÃO 3")
+print("momento nomalizado no ponto E: \n", round(momento_norm_E_cnd1, 2),"  Nm")
+print("momento nomalizado no ponto F: \n", round(momento_norm_F_cnd1, 2),"  Nm")
+
+print("SEÇÃO 4")
+print("momento nomalizado no ponto G: \n", round(momento_norm_G_cnd1, 2),"  Nm")
+print("momento nomalizado no ponto H: \n", round(momento_norm_H_cnd1, 2),"  Nm")
+
+print("SEÇÃO 5")
+print("momento nomalizado no ponto I: \n", round(momento_norm_I_cnd1, 2),"  Nm")
+print("momento nomalizado no ponto J: \n", round(momento_norm_J_cnd1, 2),"  Nm")
+
+
+
+print()
+
